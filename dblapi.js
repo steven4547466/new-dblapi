@@ -121,7 +121,7 @@ class DblAPI extends EventEmitter{
       }
     }
     let req = await this.request(opts)
-    return req.voted
+    return await JSON.parse(req).voted
   }
   
   async getStats(id){
