@@ -1,7 +1,7 @@
 const http = require('http')
 const https = require('https')
 const fastify = require('fastify')()
-const EventEmitter = require('events');
+const EventEmitter = require('events')
 
 module.exports = class DblAPI extends EventEmitter{
   constructor(token, options, client){
@@ -53,7 +53,7 @@ module.exports = class DblAPI extends EventEmitter{
 
   request(opts){
     return new Promise((resolve, reject) => {
-      let data = '';
+      let data = ''
       let request = https.request(opts, (res) => {
         if(res.statusCode == 401) throw new Error("Unauthorized, invalid DBL token.")
         res.on('data', (d) => {
