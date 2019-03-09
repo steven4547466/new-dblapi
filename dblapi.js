@@ -119,7 +119,8 @@ module.exports = class DblAPI extends EventEmitter{
         'Authorization': this.token,
       }
     }
-    return await this.request(opts)
+    let req = await this.request(opts)
+    return req.voted
   }
   
   async getStats(id){
