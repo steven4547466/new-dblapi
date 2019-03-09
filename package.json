@@ -1,6 +1,6 @@
 {
-  "name": "new-dbl-api",
-  "version": "1.0.0",
+  "name": "new-dblapi",
+  "version": "1.1.0",
   "description": "A new dbl api.",
   "main": "dblapi.js",
   "dependencies": {
