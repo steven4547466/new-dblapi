@@ -1,18 +1,18 @@
 # Simple, Easy, discordbots.org API wrapper.
 # ONLY WORKS WITH DISCORD.JS CLIENTS, IT IS NOT PLANNED TO BE MADE TO WORK WITH ERIS, sorry
-new-dbl-api was made to be very easy to use. Is it better than the original? No idea, I made this out of pure boredom, **most** of it is tested to work.
+new-dblapi was made to be very easy to use. Is it better than the original? No idea, I made this out of pure boredom, **most** of it is tested to work.
 
 ```
-npm i new-dbl-api
+npm i new-dblapi
 ```
 
 ```javascript
-const DBL = require('new-dbl-api')
+const DBL = require('new-dblapi')
 const dbl = new DBL(token[, options[, client]])
 ```
 #### -OR-
 ```javascript
-const DBL = require('new-dbl-api')
+const DBL = require('new-dblapi')
 const dbl = new DBL(token[, client])
 ```
 ***
@@ -23,12 +23,12 @@ Nothing appearing? Make sure you have the right account and your bot is since ve
 # Then what?
 Very good question. After you have a **discord.js** bot (if you don't I don't even know why your here) and a dbl token you call the constructor, it'll look something like:
 ```javascript
-const DBL = require('new-dbl-api')
+const DBL = require('new-dblapi')
 const dbl = new DBL(token[, options[, client]])
 ```
 #### -OR-
 ```javascript
-const DBL = require('new-dbl-api')
+const DBL = require('new-dblapi')
 const dbl = new DBL(token[, client])
 ```
 Look familiar? It should, it's just above this.
@@ -36,7 +36,7 @@ Look familiar? It should, it's just above this.
 # But what is options?
 Options is an object consisting of 4 things: delay (posting stats), port, auth and path. All 3, port, auth and path are for the webhook. **If you provide a port, you must provide an auth, but path is optional**. So what does it look like?
 ```javascript
-const DBL = require('new-dbl-api')
+const DBL = require('new-dblapi')
 const dbl = new DBL('your-dbl-token', {delay: 4444444, port: 5555, auth: "6666", path: "77777"}, client)
 ```
 Happy? I hope you are, it took 10 minutes to make.
@@ -45,7 +45,7 @@ Happy? I hope you are, it took 10 minutes to make.
 So you want a webhook to receive your votes? This is very easy to do and is all done in the *optional* options. That's right you don't even need them, but if you want a webhook, you do. Theres only two required parameters to get webhooks working all good, that's a port for the server to run on and your webhook's authorization.
 What if I want to be cool and run it on a different path? That's easy to do, when constructing it, provide a path. Is this too hard to understand? Let me break it down.
 ```javascript
-const DBL = require('new-dbl-api')
+const DBL = require('new-dblapi')
 const dbl = new DBL(token, {port: 5000, auth: "StinkyAuthorization", path:"notmyvotes"})
 dbl.on('vote', (vote) => {
   // Your stuff here, you cant have it all!
