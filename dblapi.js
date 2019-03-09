@@ -1,7 +1,7 @@
 const http = require('http')
 const https = require('https')
 const fastify = require('fastify')()
-const EventEmitter = require('events')
+const EventEmitter = require('events');
 
 class DblAPI extends EventEmitter{
   constructor(token, options, client){
@@ -52,7 +52,7 @@ class DblAPI extends EventEmitter{
 
   request(opts){
     return new Promise((resolve, reject) => {
-      let data = ''
+      let data = '';
       let request = https.request(opts, (res) => {
         if(res.statusCode == 401) throw new Error("Unauthorized, invalid DBL token.")
         res.on('data', (d) => {
@@ -91,6 +91,7 @@ class DblAPI extends EventEmitter{
 
   async getBot(id, votes = false){
     if(!id) id = this.client.user.id
+    if(!id) throw new Error("getBot requires a client OR a supplied id.")
     let path = `/api/bots/${id}`
     if(votes){
       path = `/api/bots/${id}/votes`
@@ -109,6 +110,7 @@ class DblAPI extends EventEmitter{
   
   async checkVote(id){
     if(!id) throw new Error("checkVote requires a user id.")
+    if(!this.client) throw new Error("checkVote requires a client.")
     let opts = {
       'hostname': 'discordbots.org',
       'port': 443,
@@ -124,6 +126,7 @@ class DblAPI extends EventEmitter{
   
   async getStats(id){
     if(!id) id = this.client.user.id
+    if(!id) throw new Error("getStats requires a client OR a supplied id.")
     let opts = {
       'hostname': 'discordbots.org',
       'port': 443,
@@ -147,6 +150,7 @@ class DblAPI extends EventEmitter{
   
   getWidget(id, opts){
     if(!id) id = this.client.user.id
+    if(!id) throw new Error("getWidget requires a client OR a supplied id.")
     opts = opts || {}
     let {
       topcolor,
