@@ -76,3 +76,6 @@ Will I add requests from the github? Yes.
 
 Will I add support for eris? idk.
 
+Do I use new-dblapi? Yes, I made it, so I'll use it.
+
+Is it better than the official library? Never tested it against it, I did skip over some things, however.
