@@ -70,7 +70,7 @@ What else can I do with this package? Theres some cool stuff you can do with thi
 
 How do I post stats? This one's easy, just provide a client (**discord.js client**). If you dont provide a delay in `options`, it will automatically be 30 minutes, the minimum is 15 minutes (0 to disable).
 
-But, what are the cool methods? There are 5 whole methods, wow! So what do we got to work with? `getUser(id)`, `getBot([id[, votes]])` (votes is false by default, add true to get last 1000 votes), `checkVote(id)`, `getStats([id])`
+But, what are the cool methods? There are 5 whole methods, wow! So what do we got to work with? `getUser(id)`, `getBot([id[, votes]])` (votes is false by default, add true to get last 1000 votes), `checkVote(id)`, `getStats([id])`, `getWidget([id[, options])`
 
 What does all this do? I have no idea to be honest I made this with 10 minutes of free time and tested it once #gooddev. 
 ***
@@ -81,6 +81,8 @@ What does all this do? I have no idea to be honest I made this with 10 minutes o
 `checkVote(id)` will... check... a... users vote! It returns 1, or 0. 1 being yes, 0 being no (true/false, if you're feeling like that).
 
 `getStats([id])` get's a **bots** stats if it's listed on discordbots.org. It will return the full bot object.
+
+`getWidget([id[, options])` get's a bots widget, has 7 options (object): topcolor, middlecolor, usernamecolor, certifiedcolor, datacolor, labelcolor and highlightcolor.
 ***
 So this was made in 10 minutes, will I keep it updated? Yes.
 
