@@ -33,7 +33,7 @@ const dbl = new DBL(token[, client])
 Look familiar? It should, it's just above this.
 
 # But what is options?
-Options is an object consisting of 4 things: delay (posting stats), port, auth and path. All 3, port, auth and path are for the webhook. **If you provide a port, you must provide an auth, but path is optional**. So what does it look like?
+Options is an object consisting of 4 main things: delay (posting stats), port, auth and path. All 3, port, auth and path are for the webhook. **If you provide a port, you must provide an auth, but path is optional**. So what does it look like?
 ```javascript
 const DBL = require('new-dblapi')
 const dbl = new DBL('your-dbl-token', {delay: 4444444, port: 5555, auth: "6666", path: "77777"}, client)
@@ -52,10 +52,23 @@ dbl.on('vote', (vote) => {
 ```
 So what does `vote` return? Vote returns exactly what the original dblapi does. This means you get a user by doing `vote.user`. Cool, eh? No? Oh, I'll go cry in a corner.
 ***
+# Vote embed option
+So you want to send vote embeds? This makes that very easy. **Inside** of your options object, add a voteEmbed object, so it'd look like this `const dbl = new DBL('your-dbl-token', {delay: 4444444, port: 5555, auth: "6666", path: "77777", voteEmbed:{}}, client)` 
+
+Inside of the vote embed, theres only 1 required parameter: a webhook URL called `url`. Apart from this, there are fields (an array of objects), title, color (a hex string, no '#' so green would be '00ff00') and thumbnail (a url).
+
+It'd look something like this:
+```javascript
+const DBL = require('new-dblapi')
+const dbl = new DBL(token, {port: 5000, auth: "StinkyAuthorization", path:"notmyvotes", voteEmbed:{url:"webhook url",fields:[{name:"name", value:"value"}],color:"00ff00"}}, client)
+```
+**This does require a client. Fields must have a name and value.** You can use {user} or {id} in fields to replace it with the username or their id.
+
+
 # Other cool stuff
 What else can I do with this package? Theres some cool stuff you can do with this package, well bascially everything the original one can do.
 
-How do I post stats? This one's easy, just provide a client (**discord.js client**). If you dont provide a delay in `options`, it will automatically be 30 minutes, the minimum is 15 minutes.
+How do I post stats? This one's easy, just provide a client (**discord.js client**). If you dont provide a delay in `options`, it will automatically be 30 minutes, the minimum is 15 minutes (0 to disable).
 
 But, what are the cool methods? There are 5 whole methods, wow! So what do we got to work with? `getUser(id)`, `getBot([id[, votes]])` (votes is false by default, add true to get last 1000 votes), `checkVote(id)`, `getStats([id])`
 
