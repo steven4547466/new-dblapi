@@ -1,18 +1,18 @@
 {
   "name": "new-dbl-api",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A new dbl api.",
   "main": "dblapi.js",
   "dependencies": {
     "fastify": "^2.0.1"
   },
   "devDependencies": {},
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [
-    "api"
+ "keywords": [
+    "api",
+    "discord",
+    "bot",
+    "discordbots"
   ],
   "author": "steven4547466",
-  "license": "ISC"
+  "license": "MIT"
 }
