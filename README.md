@@ -2,7 +2,9 @@
 # ONLY WORKS WITH DISCORD.JS CLIENTS, IT IS NOT PLANNED TO BE MADE TO WORK WITH ERIS, sorry
 new-dbl-api was made to be very easy to use. Is it better than the original? No idea, I made this out of pure boredom, **most** of it is tested to work.
 
-```npm i new-dbl-api```
+```javascript
+npm i new-dbl-api
+```
 
 ```javascript
 const DBL = require('new-dbl-api')
