@@ -50,7 +50,7 @@ dbl.on('vote', (vote) => {
   // Your stuff here, you cant have it all!
 })
 ```
-**The dedault path is /dblwebhook/**, notice the `/` at the end, this may be important, I didn't test it without it and I don't want to, but it might be important.
+**The dedault path is /vote/**, notice the `/` at the end, this may be important, I didn't test it without it and I don't want to, but it might be important.
 
 So what does `vote` return? Vote returns exactly what the original dblapi does. This means you get a user by doing `vote.user`. Cool, eh? No? Oh, I'll go cry in a corner.
 ***
