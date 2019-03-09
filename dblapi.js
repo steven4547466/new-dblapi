@@ -1,9 +1,9 @@
 const http = require('http')
 const https = require('https')
 const fastify = require('fastify')()
-const EventEmitter = require('events')
+const EventEmitter = require('events');
 
-module.exports = class DblAPI extends EventEmitter{
+class DblAPI extends EventEmitter{
   constructor(token, options, client){
     super()
     if(!token){
@@ -43,17 +43,16 @@ module.exports = class DblAPI extends EventEmitter{
     if(port){
       if(!auth) throw new Error("No auth provided with port.")
       fastify.post(`/${path}/`, (req, res) => this.onVote(req, res))
-      fastify.listen(port, (err, address) => {
+      fastify.listen(port, '0.0.0.0', (err, address) => {
         if(err) throw new Error(`Error starting server: ${err}`)
-        console.info(`Dbl webhook listening at ${address}/${path}`)
+        console.info(`Webhook listening at ${address}/${path}/`)
       })
     }
-    this.emit('ready')
   }
 
   request(opts){
     return new Promise((resolve, reject) => {
-      let data = ''
+      let data = '';
       let request = https.request(opts, (res) => {
         if(res.statusCode == 401) throw new Error("Unauthorized, invalid DBL token.")
         res.on('data', (d) => {
@@ -141,8 +140,7 @@ module.exports = class DblAPI extends EventEmitter{
     if(req.headers.authorization !== this.auth){
       res.status(401).send("Unauthorized")
     }else{
-      res.status(200)
-      let vote = JSON.parse(req.body)
+      let vote = req.body
       this.emit('vote', vote)
     }
   }
@@ -229,3 +227,5 @@ function isLib(library, client){
     return false
   }
 }
+
+module.exports = DblAPI
