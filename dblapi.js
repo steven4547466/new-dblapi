@@ -1,7 +1,7 @@
 const http = require('http')
 const https = require('https')
 const fastify = require('fastify')()
-const EventEmitter = require('events');
+const EventEmitter = require('events')
 
 class DblAPI extends EventEmitter{
   constructor(token, options, client){
@@ -20,11 +20,13 @@ class DblAPI extends EventEmitter{
     if(client && isLib('discord.js', client)){
       this.client = client
       if(!this.options.delay) this.options.delay = 1800000
-      if(this.options.delay < 900000) throw new Error("Delay can not be less than 15 minutes (900000 ms).")
-      this.postStats()
-      setInterval(() => {
-        this.postStats()        
-      }, this.options.delay)
+      if(this.options.delay != 0){
+        if(this.options.delay < 900000) throw new Error("Delay can not be less than 15 minutes (900000 ms).")
+        this.postStats()
+        setInterval(() => {
+          this.postStats()        
+        }, this.options.delay)
+      }
     }else if(client){
       throw new Error("Client provided is not a discord.js client.")
     }
@@ -32,7 +34,8 @@ class DblAPI extends EventEmitter{
     let {
       port,
       auth,
-      path
+      path,
+      voteEmbed
     } = this.options
     
     this.port = port
@@ -48,11 +51,26 @@ class DblAPI extends EventEmitter{
         console.info(`Webhook listening at ${address}/${path}/`)
       })
     }
+    if(voteEmbed){
+      if(!this.client) throw new Error("You must provide a client to use the voteEmbed feature")
+      if(!voteEmbed.url) throw new Error("Webhook url must be provided when using voteEmbed")
+      this.setWebhook(voteEmbed)
+      this.voteHookOptions = voteEmbed
+    }
   }
 
-  request(opts){
+  async setWebhook(voteEmbed){
+    let hook = voteEmbed.url.split("/")
+    let id = hook[hook.length - 2]
+    let token = hook[hook.length - 1]
+    let webhook = await this.client.fetchWebhook(id, token)
+    this.voteHook = webhook
+    console.info(`Vote embed working on webhook id: ${id}`)
+  }
+  
+  async request(opts){
     return new Promise((resolve, reject) => {
-      let data = '';
+      let data = ''
       let request = https.request(opts, (res) => {
         if(res.statusCode == 401) throw new Error("Unauthorized, invalid DBL token.")
         res.on('data', (d) => {
@@ -139,16 +157,7 @@ class DblAPI extends EventEmitter{
     return await this.request(opts)
   }
   
-  onVote(req, res){
-    if(req.headers.authorization !== this.auth){
-      res.status(401).send("Unauthorized")
-    }else{
-      let vote = req.body
-      this.emit('vote', vote)
-    }
-  }
-  
-  getWidget(id, opts){
+  async getWidget(id, opts){
     if(!id) id = this.client.user.id
     if(!id) throw new Error("getWidget requires a client OR a supplied id.")
     opts = opts || {}
@@ -162,6 +171,59 @@ class DblAPI extends EventEmitter{
       highlightcolor
     } = opts
     return `https://discordbots.org/api/widget/${id}.svg?${topcolor ? `topcolor=${topcolor}&`:''}${middlecolor ? `middlecolor=${middlecolor}&`:''}${usernamecolor ? `usernamecolor=${usernamecolor}&`:''}${certifiedcolor ? `certifiedcolor=${certifiedcolor}&`:''}${datacolor ? `datacolor=${datacolor}&`:''}${labelcolor ? `labelcolor=${labelcolor}&`:''}${highlightcolor ? `highlightcolor=${highlightcolor}&`:''}`.slice(0, -1)
+  }
+  
+  sendEmbed(content){
+    try{
+      this.voteHook.send({embeds: [content]})
+    }catch(e){console.error(e)}
+  }
+  
+  async onVote(req, res){
+    if(req.headers.authorization !== this.auth){
+      res.status(401).send("Unauthorized")
+    }else{
+      let vote = req.body
+      this.emit('vote', vote)
+      if(this.voteHook){
+        let voter = await this.getUser(vote.user)
+        let fields = []
+        if(this.voteHookOptions.fields){
+          if(this.voteHookOptions.fields.length < 1) throw new Error("voteHook.fields must be an array with atleast 1 entry")
+          for(let i in this.voteHookOptions.fields){
+            let cur = this.voteHookOptions.fields[i]
+            let name = cur.name
+            let value = cur.value
+            if(!name || !value) throw new Error("One of the provided voteHook.fields does not have a name or value")
+            name = name.toString()
+            value = value.toString()
+            name = name.replace(/{user}/g, voter.username)
+            name = name.replace(/{id}/g, vote.user)
+            value = value.replace(/{user}/g, voter.username)
+            value = value.replace(/{id}/g, vote.user)
+            fields.push({"name": name, "value": value})
+          }
+        }
+        if(voter.avatar){
+          var icon = `https://cdn.discordapp.com/avatars/${vote.user}/${voter.avatar}.png`
+        }else{
+          var icon = `https://discordapp.com/assets/dd4dbc0016779df1378e7812eabaa04d.png`
+        }
+        let embed = {
+            "author": {
+              "name": voter.username || "Test",
+              "icon_url": icon || "https://discordapp.com/assets/dd4dbc0016779df1378e7812eabaa04d.png"
+            },
+            "title": this.voteHookOptions.title || "New Vote!",
+            "color": parseInt(this.voteHookOptions.color, 16) || Math.floor(Math.random()*16777215),
+            "thumbnail": {
+              "url": this.voteHookOptions.thumbnail || ""
+            },
+            "fields": fields
+        }
+        this.sendEmbed(embed)
+      }
+    }
   }
   
   postStats(){
