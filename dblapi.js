@@ -14,7 +14,7 @@ class DblAPI extends EventEmitter{
    * @param {string} [options.path = '/vote/'] The path of the webhook to listen on. Defaults to '/vote/'
    * @param {Object} [options.voteEmbed] The options for the vote embed.
    * @param {string} [options.voteEmbed.url] A discord guild webhook url.
-   * @param {Array > Object} [options.voteEmbed.fields] An array of objects to use as fields in the embed. Must contain a 'name' key and a 'value' key. {user} will be replaced with the voters username and {id} will be replace with the voters id.
+   * @param {Array [Object]} [options.voteEmbed.fields] An array of objects to use as fields in the embed. Must contain a 'name' key and a 'value' key. {user} will be replaced with the voters username and {id} will be replace with the voters id.
    * @param {string} [options.voteEmbed.title = 'New Vote'] A string to use as the title. Defaults to 'New Vote'.
    * @param {string} [options.voteEmbed.color = Random] A hex string to use as the color. Defaults to a random color.
    * @param {string} [options.voteEmbed.thumbnail] A url to use as the thumbnail of the embed.
@@ -121,7 +121,7 @@ class DblAPI extends EventEmitter{
   /**
    * Gets a user from the discordbots.org api.
    * @param {string} id A user id.
-   * @returns {Promise<User>}
+   * @returns {Promise<Object>}
    */
   async getUser(id){
     if(!id) throw new Error("getUser requires a user id.")
@@ -141,7 +141,7 @@ class DblAPI extends EventEmitter{
    * Gets a bot from the discordbots.org api.
    * @param {string} [id = this.client.user.id] A bot id, defaults to the current clients id.
    * @param {boolean} [votes = false] A boolean to return last 1000 votes or a bot.
-   * @returns {Promise<Bot>} OR {Promise<Array>}
+   * @returns {Promise<Object>} OR {Promise<Array>}
    */
   async getBot(id, votes = false){
     if(!id) id = this.client.user.id
