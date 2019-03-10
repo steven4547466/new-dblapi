@@ -72,13 +72,15 @@ What else can I do with this package? Theres some cool stuff you can do with thi
 
 How do I post stats? This one's easy, just provide a client (**discord.js client**). If you dont provide a delay in `options`, it will automatically be 30 minutes, the minimum is 15 minutes (0 to disable).
 
-But, what are the cool methods? There are 7 whole methods, wow! So what do we got to work with? `getUser(id)`, `getBot([id[, votes]])` (votes is false by default, add true to get last 1000 votes), `checkVote(id)`, `getStats([id])`, `getWidget([id[, options])`, `postStats()`, `request(opts)`
+But, what are the cool methods? There are 8 whole methods, wow! So what do we got to work with? `getUser(id)`, `getBot([id[, votes]])` (votes is false by default, add true to get last 1000 votes), `getBots([query])`, `checkVote(id)`, `getStats([id])`, `getWidget([id[, options])`, `postStats()`, `request(opts)`
 
 What does all this do? I have no idea to be honest I made this with 10 minutes of free time and tested it once #gooddev. 
 ***
 `getUser(id)` gets a user, who'da thunk it? It returns a user from the discordbots api
 
 `getBot([id[, votes]])` gets a bot, wow! Another obvious method! It will get your bot by default and if you put votes to true, it will return an array of the last 1000 votes. Cool.
+
+`getBots([query])` gets multiple bots. Query options are limit, offset, search, sort and fields.
 
 `checkVote(id)` will... check... a... users vote! It returns 1, or 0. 1 being yes, 0 being no (true/false, if you're feeling like that **This is a joke, it actually returns true/false don't get mad, but in JavaScript 1 = true and 0 = false anyways.**).
 
