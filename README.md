@@ -1,8 +1,5 @@
 # Simple, Easy, discordbots.org API wrapper. Thing
 new-dblapi was made to be very easy to use. Is it better than the original? No idea, I made this out of pure boredom, **most** of it is tested to work.
-***
-[![Coverage](https://coveralls.io/repos/github/steven4547466/new-dblapi/badge.svg?branch=master)](https://coveralls.io/github/steven4547466/new-dblapi?branch=master)
-***
 
 ```
 npm i new-dblapi
