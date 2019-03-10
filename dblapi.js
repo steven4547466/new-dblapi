@@ -75,7 +75,7 @@ class DblAPI extends EventEmitter{
     }
   }
   
-  /*
+  /**
    * Sets the vote embed webhook.
    * @param {Object} voteEmbed The voteEmbed object.
    */
@@ -88,7 +88,7 @@ class DblAPI extends EventEmitter{
     console.info(`Vote embed working on webhook id: ${id}`)
   }
   
-  /*
+  /**
    * Create a request.
    * @param {Object} opts Options, does not POST.
    * @returns {Promise<Object>}
@@ -118,7 +118,7 @@ class DblAPI extends EventEmitter{
     })
   }
 
-  /*
+  /**
    * Gets a user from the discordbots.org api.
    * @param {string} id A user id.
    * @returns {Promise<User>}
@@ -137,7 +137,7 @@ class DblAPI extends EventEmitter{
     return await this.request(opts)
   }
 
-  /*
+  /**
    * Gets a bot from the discordbots.org api.
    * @param {string} [id = this.client.user.id] A bot id, defaults to the current clients id.
    * @param {boolean} [votes = false] A boolean to return last 1000 votes or a bot.
@@ -162,7 +162,7 @@ class DblAPI extends EventEmitter{
     return await this.request(opts)
   }
   
-  /*
+  /**
    * Check if a user has voted.
    * @param {string} id A user id.
    * @returns {Promise<number>}
@@ -183,7 +183,7 @@ class DblAPI extends EventEmitter{
     return await JSON.parse(req).voted
   }
   
-  /*
+  /**
    * Get a bots stats.
    * @param {string} [id] A bots id.
    * @returns {Promise<Object>}
@@ -203,7 +203,7 @@ class DblAPI extends EventEmitter{
     return await this.request(opts)
   }
   
-  /*
+  /**
    * Gets a bots widget.
    * @param {string} [id = this.client.user.id] A bots id defaulting to this.client.user.id.
    * @param {Object} [opts] An object with options.
@@ -232,7 +232,7 @@ class DblAPI extends EventEmitter{
     return `https://discordbots.org/api/widget/${id}.svg?${topcolor ? `topcolor=${topcolor}&`:''}${middlecolor ? `middlecolor=${middlecolor}&`:''}${usernamecolor ? `usernamecolor=${usernamecolor}&`:''}${certifiedcolor ? `certifiedcolor=${certifiedcolor}&`:''}${datacolor ? `datacolor=${datacolor}&`:''}${labelcolor ? `labelcolor=${labelcolor}&`:''}${highlightcolor ? `highlightcolor=${highlightcolor}&`:''}`.slice(0, -1)
   }
   
-  /*
+  /**
    * Sends an embed with the webhook.
    * @param {Object} The content to send.
    */
@@ -242,7 +242,7 @@ class DblAPI extends EventEmitter{
     }catch(e){console.error(e)}
   }
   
-  /*
+  /**
    * Triggered on vote.
    * @param {Object} req The request.
    * @param {Object} res The response.
@@ -294,7 +294,7 @@ class DblAPI extends EventEmitter{
     }
   }
   
-  /*
+  /**
    * Posts the bots stats to discordbots.org.
    */
   postStats(){
@@ -356,7 +356,7 @@ class DblAPI extends EventEmitter{
   }
 }
 
-/*
+/**
  * Ensures the client is discord.js
  * @returns {boolean}
  */
