@@ -80,7 +80,7 @@ What does all this do? I have no idea to be honest I made this with 10 minutes o
 
 `getBot([id[, votes]])` gets a bot, wow! Another obvious method! It will get your bot by default and if you put votes to true, it will return an array of the last 1000 votes. Cool.
 
-`checkVote(id)` will... check... a... users vote! It returns 1, or 0. 1 being yes, 0 being no (true/false, if you're feeling like that).
+`checkVote(id)` will... check... a... users vote! It returns 1, or 0. 1 being yes, 0 being no (true/false, if you're feeling like that **This is a joke, it actually returns true/false dont get mad, but in JavaScript 1 = true and 0 = false anyways.**).
 
 `getStats([id])` get's a **bots** stats if it's listed on discordbots.org. It will return the full bot object.
 
