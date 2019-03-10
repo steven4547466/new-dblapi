@@ -4,7 +4,7 @@ const fastify = require('fastify')()
 const EventEmitter = require('events')
 
 class DblAPI extends EventEmitter{
-  /*
+  /**
    * Creates a new instance.
    * @param {string} token A discordbots.org token.
    * @param {Object} [options] Options for the constructor.
