@@ -4,6 +4,22 @@ const fastify = require('fastify')()
 const EventEmitter = require('events')
 
 class DblAPI extends EventEmitter{
+  /*
+   * Creates a new instance.
+   * @param {string} token A discordbots.org token.
+   * @param {Object} [options] Options for the constructor.
+   * @param {number} [options.delay = 1800000] Delay between posting stats, defaults to 1800000, cannot be below 900000. 0 to disable.
+   * @param {number} [options.port] The port for the vote webhook to run on.
+   * @param {string} [options.auth] The authorization for your webhook, must be the same that is set in the edit page of your bot.
+   * @param {string} [options.path = '/vote/'] The path of the webhook to listen on. Defaults to '/vote/'
+   * @param {Object} [options.voteEmbed] The options for the vote embed.
+   * @param {string} [options.voteEmbed.url] A discord guild webhook url.
+   * @param {Array > Object} [options.voteEmbed.fields] An array of objects to use as fields in the embed. Must contain a 'name' key and a 'value' key. {user} will be replaced with the voters username and {id} will be replace with the voters id.
+   * @param {string} [options.voteEmbed.title = 'New Vote'] A string to use as the title. Defaults to 'New Vote'.
+   * @param {string} [options.voteEmbed.color = Random] A hex string to use as the color. Defaults to a random color.
+   * @param {string} [options.voteEmbed.thumbnail] A url to use as the thumbnail of the embed.
+   * @param {any} [client] A discord.js client, will auto post stats if not disabled.
+   */
   constructor(token, options, client){
     super()
     if(!token){
@@ -58,7 +74,11 @@ class DblAPI extends EventEmitter{
       this.voteHookOptions = voteEmbed
     }
   }
-
+  
+  /*
+   * Sets the vote embed webhook.
+   * @param {Object} voteEmbed The voteEmbed object.
+   */
   async setWebhook(voteEmbed){
     let hook = voteEmbed.url.split("/")
     let id = hook[hook.length - 2]
@@ -68,6 +88,11 @@ class DblAPI extends EventEmitter{
     console.info(`Vote embed working on webhook id: ${id}`)
   }
   
+  /*
+   * Create a request.
+   * @param {Object} opts Options, does not POST.
+   * @returns {Promise<Object>}
+   */
   async request(opts){
     return new Promise((resolve, reject) => {
       let data = ''
@@ -93,6 +118,11 @@ class DblAPI extends EventEmitter{
     })
   }
 
+  /*
+   * Gets a user from the discordbots.org api.
+   * @param {string} id A user id.
+   * @returns {Promise<User>}
+   */
   async getUser(id){
     if(!id) throw new Error("getUser requires a user id.")
     let opts = {
@@ -107,6 +137,12 @@ class DblAPI extends EventEmitter{
     return await this.request(opts)
   }
 
+  /*
+   * Gets a bot from the discordbots.org api.
+   * @param {string} [id = this.client.user.id] A bot id, defaults to the current clients id.
+   * @param {boolean} [votes = false] A boolean to return last 1000 votes or a bot.
+   * @returns {Promise<Bot>} OR {Promise<Array>}
+   */
   async getBot(id, votes = false){
     if(!id) id = this.client.user.id
     if(!id) throw new Error("getBot requires a client OR a supplied id.")
@@ -126,6 +162,11 @@ class DblAPI extends EventEmitter{
     return await this.request(opts)
   }
   
+  /*
+   * Check if a user has voted.
+   * @param {string} id A user id.
+   * @returns {Promise<number>}
+   */
   async checkVote(id){
     if(!id) throw new Error("checkVote requires a user id.")
     if(!this.client) throw new Error("checkVote requires a client.")
@@ -142,6 +183,11 @@ class DblAPI extends EventEmitter{
     return await JSON.parse(req).voted
   }
   
+  /*
+   * Get a bots stats.
+   * @param {string} [id] A bots id.
+   * @returns {Promise<Object>}
+   */
   async getStats(id){
     if(!id) id = this.client.user.id
     if(!id) throw new Error("getStats requires a client OR a supplied id.")
@@ -157,6 +203,19 @@ class DblAPI extends EventEmitter{
     return await this.request(opts)
   }
   
+  /*
+   * Gets a bots widget.
+   * @param {string} [id = this.client.user.id] A bots id defaulting to this.client.user.id.
+   * @param {Object} [opts] An object with options.
+   * @param {string} [opts.topcolor] The top color.
+   * @param {string} [opts.middlecolor] The middle color.
+   * @param {string} [opts.usernamecolor] The username color.
+   * @param {string} [opts.certifiedcolor] The certified color.
+   * @param {string} [opts.datacolor] The data color.
+   * @param {string} [opts.labelcolor] The label color.
+   * @param {string} [opts.highlightcolor] The highlight color.
+   * @returns {string}
+   */
   async getWidget(id, opts){
     if(!id) id = this.client.user.id
     if(!id) throw new Error("getWidget requires a client OR a supplied id.")
@@ -173,12 +232,21 @@ class DblAPI extends EventEmitter{
     return `https://discordbots.org/api/widget/${id}.svg?${topcolor ? `topcolor=${topcolor}&`:''}${middlecolor ? `middlecolor=${middlecolor}&`:''}${usernamecolor ? `usernamecolor=${usernamecolor}&`:''}${certifiedcolor ? `certifiedcolor=${certifiedcolor}&`:''}${datacolor ? `datacolor=${datacolor}&`:''}${labelcolor ? `labelcolor=${labelcolor}&`:''}${highlightcolor ? `highlightcolor=${highlightcolor}&`:''}`.slice(0, -1)
   }
   
+  /*
+   * Sends an embed with the webhook.
+   * @param {Object} The content to send.
+   */
   sendEmbed(content){
     try{
       this.voteHook.send({embeds: [content]})
     }catch(e){console.error(e)}
   }
   
+  /*
+   * Triggered on vote.
+   * @param {Object} req The request.
+   * @param {Object} res The response.
+   */
   async onVote(req, res){
     if(req.headers.authorization !== this.auth){
       res.status(401).send("Unauthorized")
@@ -211,7 +279,7 @@ class DblAPI extends EventEmitter{
         }
         let embed = {
             "author": {
-              "name": voter.username || "Test",
+              "name": voter.username || "New Vote",
               "icon_url": icon || "https://discordapp.com/assets/dd4dbc0016779df1378e7812eabaa04d.png"
             },
             "title": this.voteHookOptions.title || "New Vote!",
@@ -226,6 +294,9 @@ class DblAPI extends EventEmitter{
     }
   }
   
+  /*
+   * Posts the bots stats to discordbots.org.
+   */
   postStats(){
     if(!this.client) throw new Error("No client provided in constructor.")
     if(this.client.shard){
@@ -284,6 +355,11 @@ class DblAPI extends EventEmitter{
     }
   }
 }
+
+/*
+ * Ensures the client is discord.js
+ * @returns {boolean}
+ */
 
 function isLib(library, client){
   try {
