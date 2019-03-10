@@ -165,7 +165,7 @@ class DblAPI extends EventEmitter{
   /**
    * Check if a user has voted.
    * @param {string} id A user id.
-   * @returns {Promise<number>}
+   * @returns {Promise<boolean>}
    */
   async checkVote(id){
     if(!id) throw new Error("checkVote requires a user id.")
@@ -180,7 +180,7 @@ class DblAPI extends EventEmitter{
       }
     }
     let req = await this.request(opts)
-    return await JSON.parse(req).voted
+    return await !!(JSON.parse(req).voted)
   }
   
   /**
