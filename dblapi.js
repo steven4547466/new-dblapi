@@ -159,7 +159,38 @@ class DblAPI extends EventEmitter{
         'Authorization': this.token,
       }
     }
-    return await this.request(opts)
+    return await JSON.parse(this.request(opts))
+  }
+  
+  /**
+   * Get bots from discordbots.org
+   * @param {Object} [query] A search query.
+   * @param {number} [limit] A search limit.
+   * @param {number} [offset] A set offset to skip.
+   * @param {string} [search] A search string in the format of `field: value field2: value2`
+   * @param {string} [sort] A field to sort by, add `-` at the beginning to reverse
+   * @param {string} [fields] The fields to search, comma separated.
+   * @returns {Promise<Object>}
+   */
+  async getBots(query = {}){
+    let {
+      limit,
+      offset,
+      search,
+      sort,
+      fields
+    } = query
+    let path = `/api/bots?${limit ? `limit=${limit}&` : ''}${offset ? `offset=${offset}&` : ''}${search ? `search=${search}&` : ''}${sort ? `sort=${sort}&` : ''}${fields ? `fields=${fields}&` : ''}`.slice(0, -1)
+    let opts = {
+      'hostname': 'discordbots.org',
+      'port': 443,
+      'path': path,
+      'method': 'GET',
+      'headers': {
+        'Authorization': this.token,
+      }
+    }
+    return await JSON.parse(this.request(opts))
   }
   
   /**
