@@ -211,11 +211,7 @@ class DblAPI extends EventEmitter{
       }
     }
     let req = await this.request(opts)
-<<<<<<< HEAD
-    return req.voted
-=======
     return await !!(JSON.parse(req).voted)
->>>>>>> 174b82083910604831a849293f44b5b8e8bdcfb2
   }
   
   /**
