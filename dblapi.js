@@ -38,10 +38,12 @@ class DblAPI extends EventEmitter{
       if(!this.options.delay) this.options.delay = 1800000
       if(this.options.delay != 0){
         if(this.options.delay < 900000) throw new Error("Delay can not be less than 15 minutes (900000 ms).")
-        this.postStats()
-        setInterval(() => {
-          this.postStats()        
-        }, this.options.delay)
+        this.client.on('ready', () => {
+          this.postStats()
+          setInterval(() => {
+            this.postStats()        
+          }, this.options.delay)
+        })
       }
     }else if(client){
       throw new Error("Client provided is not a discord.js client.")
@@ -70,8 +72,10 @@ class DblAPI extends EventEmitter{
     if(voteEmbed){
       if(!this.client) throw new Error("You must provide a client to use the voteEmbed feature")
       if(!voteEmbed.url) throw new Error("Webhook url must be provided when using voteEmbed")
-      this.setWebhook(voteEmbed)
-      this.voteHookOptions = voteEmbed
+      this.client.on('ready', () => {
+        this.setWebhook(voteEmbed)
+        this.voteHookOptions = voteEmbed
+      })
     }
   }
   
