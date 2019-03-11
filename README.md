@@ -76,7 +76,7 @@ Apart from that you have 5 booleans, none are required and are enabled by defaul
 Like all the other methods, it's simple to set up.
 ```javascript
 const DBL = require('new-dblapi')
-const dbl = new DBL(token, {logsHook: {url:"discordWebhookPls",resume:false,disconnect:false}})
+const dbl = new DBL(token, {logsHook: {url:"discordWebhookPls", resume:false, disconnect:false}}, client)
 ```
 Stop pestering me and just read the comments in the code already!
 
