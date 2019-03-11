@@ -102,8 +102,11 @@ class DblAPI extends EventEmitter{
       let data = ''
       let request = https.request(opts, (res) => {
         if(res.statusCode == 401) throw new Error("Unauthorized, invalid DBL token.")
+        else if(res.statusCode == 404) throw new Error("404, not found. (Invalid id?)")
+        else if(res.statusCode == 403) throw new Error("403, forbidden")
+        else if(res.statusCode == 400) throw new Error("Bad request")
         res.on('data', (d) => {
-          if(res.statusCode == 200){
+          if(res.statusCode.toString().startsWith("2")){
             data += d
           }else{
             throw new Error(`Non-200 code: ${res.statusCode}`)
@@ -138,7 +141,8 @@ class DblAPI extends EventEmitter{
         'Authorization': this.token,
       }
     }
-    return await this.request(opts)
+    let req = await this.request(opts)
+    return await JSON.parse(req)
   }
 
   /**
@@ -163,7 +167,8 @@ class DblAPI extends EventEmitter{
         'Authorization': this.token,
       }
     }
-    return await JSON.parse(this.request(opts))
+    let req = await this.request(opts)
+    return await JSON.parse(req)
   }
   
   /**
@@ -194,7 +199,8 @@ class DblAPI extends EventEmitter{
         'Authorization': this.token,
       }
     }
-    return await JSON.parse(this.request(opts))
+    let req = await this.request(opts)
+    return await JSON.parse(req)
   }
   
   /**
@@ -235,7 +241,8 @@ class DblAPI extends EventEmitter{
         'Authorization': this.token,
       }
     }
-    return await this.request(opts)
+    let req = await this.request(opts)
+    return await JSON.parse(req)
   }
   
   /**
