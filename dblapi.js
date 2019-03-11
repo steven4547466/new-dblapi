@@ -90,82 +90,82 @@ class DblAPI extends EventEmitter{
       this.client.on('ready', () => {
         this.setLogsHook(logsHook)
         this.logsHookOptions = logsHook
+        if((this.logsHookOptions.errors === true || !this.logsHookOptions.errors) && this.logsHookOptions.errors !== false){
+          this.client.on('error', (error) => {
+            let content = {
+              "title": "Client error",
+              "color": 16711680,
+              "thumbnail": {
+                "url": this.client.user.displayAvatarURL
+              },
+              "fields": [{ "name": "Error", "value": error.message}, { "name": "File", "value": error.fileName}, { "name": "Estimated line", "value": error.lineNumber}]
+            }
+            try{
+              this.logsHook.send({embeds: [content]})
+            }catch(e){console.error(e)}
+          })
+        }
+        if((this.logsHookOptions.disconnect === true || !this.logsHookOptions.disconnect) && this.logsHookOptions.disconnect !== false){
+          this.client.on('disconnect', (event) => {
+            let content = {
+              "title": "Client disconnected",
+              "color": 16711680,
+              "thumbnail": {
+                "url": this.client.user.displayAvatarURL
+              },
+              "fields": [{"name":"Client has disconnected","value": this.client.shard ? `Shard: ${this.client.shard.id}` : "​"}, {"name":"Websocket close event","value":`Code: ${event.code}, Reason: ${event.reason}, Clean: ${event.wasClean}`}]
+            }
+            try{
+              this.logsHook.send({embeds: [content]})
+            }catch(e){console.error(e)}
+          })
+        }
+        if((this.logsHookOptions.reconnect === true || !this.logsHookOptions.reconnect) && this.logsHookOptions.reconnect !== false){
+          this.client.on('reconnecting', () => {
+            let content = {
+              "title": "Client attempting reconnect",
+              "color": 65280,
+              "thumbnail": {
+                "url": this.client.user.displayAvatarURL
+              },
+              "fields": [{"name":"Client is attempting a reconnect","value": this.client.shard ? `Shard: ${this.client.shard.id}` : "​"}]
+            }
+            try{
+              this.logsHook.send({embeds: [content]})
+            }catch(e){console.error(e)}
+          })
+        }
+        if((this.logsHookOptions.resume === true || !this.logsHookOptions.resume) && this.logsHookOptions.resume !== false){
+          this.client.on('resume', (num) => {
+            let content = {
+              "title": "Client connection to websocket resumed",
+              "color": 65280,
+              "thumbnail": {
+                "url": this.client.user.displayAvatarURL
+              },
+              "fields": [{"name":"Client websocket connection resumed","value": this.client.shard ? `Shard: ${this.client.shard.id}` : "​"}, {"name":"Replayed events", "value":`${num}`}]
+            }
+            try{
+              this.logsHook.send({embeds: [content]})
+            }catch(e){console.error(e)}
+          })
+        }
+        if((this.logsHookOptions.rateLimit === true || !this.logsHookOptions.rateLimit) && this.logsHookOptions.rateLimit !== false){
+          this.client.on('rateLimit', (info) => {
+            let content = {
+              "title": "Client encountered ratelimit",
+              "color": 16711680,
+              "thumbnail": {
+                "url": this.client.user.displayAvatarURL
+              },
+              "fields": [{"name":"Client ratelimited","value": this.client.shard ? `Shard: ${this.client.shard.id}` : "​"},{"name":"Request limit","value":`${info.requestLimit}`},{"name":"Path","value":`${info.path}`}]
+            }
+            try{
+              this.logsHook.send({embeds: [content]})
+            }catch(e){console.error(e)}
+          })
+        }
       })
-      if((this.logsHookOptions.errors === true || !this.logsHookOptions.errors) && this.logsHookOptions.errors !== false){
-        this.client.on('error', (error) => {
-          let content = {
-            "title": "Client error",
-            "color": 16711680,
-            "thumbnail": {
-              "url": this.client.user.displayAvatarURL
-            },
-            "fields": [{ "name": "Error", "value": error.message}, { "name": "File", "value": error.fileName}, { "name": "Estimated line", "value": error.lineNumber}]
-          }
-          try{
-            this.logsHook.send({embeds: [content]})
-          }catch(e){console.error(e)}
-        })
-      }
-      if((this.logsHookOptions.disconnect === true || !this.logsHookOptions.disconnect) && this.logsHookOptions.disconnect !== false){
-        this.client.on('disconnect', (event) => {
-          let content = {
-            "title": "Client disconnected",
-            "color": 16711680,
-            "thumbnail": {
-              "url": this.client.user.displayAvatarURL
-            },
-            "fields": [{"name":"Client has disconnected","value": this.client.shard ? `Shard: ${this.client.shard.id}` : "​"}, {"name":"Websocket close event","value":`Code: ${event.code}, Reason: ${event.reason}, Clean: ${event.wasClean}`}]
-          }
-          try{
-            this.logsHook.send({embeds: [content]})
-          }catch(e){console.error(e)}
-        })
-      }
-      if((this.logsHookOptions.reconnect === true || !this.logsHookOptions.reconnect) && this.logsHookOptions.reconnect !== false){
-        this.client.on('reconnecting', () => {
-          let content = {
-            "title": "Client attempting reconnect",
-            "color": 65280,
-            "thumbnail": {
-              "url": this.client.user.displayAvatarURL
-            },
-            "fields": [{"name":"Client is attempting a reconnect","value": this.client.shard ? `Shard: ${this.client.shard.id}` : "​"}]
-          }
-          try{
-            this.logsHook.send({embeds: [content]})
-          }catch(e){console.error(e)}
-        })
-      }
-      if((this.logsHookOptions.resume === true || !this.logsHookOptions.resume) && this.logsHookOptions.resume !== false){
-        this.client.on('resume', (num) => {
-          let content = {
-            "title": "Client connection to websocket resumed",
-            "color": 65280,
-            "thumbnail": {
-              "url": this.client.user.displayAvatarURL
-            },
-            "fields": [{"name":"Client websocket connection resumed","value": this.client.shard ? `Shard: ${this.client.shard.id}` : "​"}, {"name":"Replayed events", "value":`${num}`}]
-          }
-          try{
-            this.logsHook.send({embeds: [content]})
-          }catch(e){console.error(e)}
-        })
-      }
-      if((this.logsHookOptions.rateLimit === true || !this.logsHookOptions.rateLimit) && this.logsHookOptions.rateLimit !== false){
-        this.client.on('rateLimit', (info) => {
-          let content = {
-            "title": "Client encountered ratelimit",
-            "color": 16711680,
-            "thumbnail": {
-              "url": this.client.user.displayAvatarURL
-            },
-            "fields": [{"name":"Client ratelimited","value": this.client.shard ? `Shard: ${this.client.shard.id}` : "​"},{"name":"Request limit","value":`${info.requestLimit}`},{"name":"Path","value":`${info.path}`}]
-          }
-          try{
-            this.logsHook.send({embeds: [content]})
-          }catch(e){console.error(e)}
-        })
-      }
     }
   }
 
