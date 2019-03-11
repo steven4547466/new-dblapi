@@ -24,6 +24,7 @@ class DblAPI extends EventEmitter{
    * @param {boolean} [options.logsHook.reconnect]
    * @param {boolean} [options.logsHook.resume]
    * @param {boolean} [options.logsHook.rateLimit]
+   * @param {boolean} [options.logsHook.post]
    * @param {any} [client] A discord.js client, will auto post stats if not disabled.
    */
   constructor(token, options, client){
