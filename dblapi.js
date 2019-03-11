@@ -167,7 +167,7 @@ class DblAPI extends EventEmitter{
           })
         }
         if((this.logsHookOptions.post === true || !this.logsHookOptions.post) && this.logsHookOptions.post !== false){
-          this..on('posted', (count) => {
+          this.on('posted', (count) => {
             let content = {
               "title": "Client posted stats.",
               "color": 65280,
