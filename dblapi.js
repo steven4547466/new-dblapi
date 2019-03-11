@@ -165,6 +165,21 @@ class DblAPI extends EventEmitter{
             }catch(e){console.error(e)}
           })
         }
+        if((this.logsHookOptions.post === true || !this.logsHookOptions.post) && this.logsHookOptions.post !== false){
+          this..on('posted', (count) => {
+            let content = {
+              "title": "Client posted stats.",
+              "color": 65280,
+              "thumbnail": {
+                "url": this.client.user.displayAvatarURL
+              },
+              "fields": [{"name":"Count","value": count}]
+            }
+            try{
+              this.logsHook.send({embeds: [content]})
+            }catch(e){console.error(e)}
+          })
+        }
       })
     }
   }
@@ -471,6 +486,7 @@ class DblAPI extends EventEmitter{
         post.write(postData)
         post.end()
         post.on('error', (err) => console.error(err))
+        this.emit("posted", count)
       })
     }else {
       let count = this.client.guilds.size
@@ -497,6 +513,7 @@ class DblAPI extends EventEmitter{
       post.write(postData)
       post.end()
       post.on('error', (err) => console.error(err))
+      this.emit("posted", count)
     }
   }
 }
