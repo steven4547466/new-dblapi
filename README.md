@@ -66,6 +66,19 @@ const dbl = new DBL(token, {port: 5000, auth: "StinkyAuthorization", path:"notmy
 ```
 **This does require a client. Fields must have a name and value.** You can use {user} or {id} in fields to replace it with the username or their id.
 
+# Logs and Stuff
+So you want some logs? I'll give you some logs. If you enable this, you can log: errors, disconnects, reconnecting, websocket resuming and rate limiting. **Requires a client**
+
+How do you do this? Just like the vote embed, it's an object inside of the options called logsHook. What's in logsHook, you may ask. I'll tell you! You have the 1 required parameter if you use this: url. It's a url to a discord webhook. 
+
+Apart from that you have 5 booleans, none are required and are enabled by default. So you have: errors, disconnect, reconnect, resume and rateLimit.
+
+Like all the other methods, it's simple to set up.
+```javascript
+const DBL = require('new-dblapi')
+const dbl = new DBL(token, {logsHook: {url:"discordWebhookPls",resume:false,disconnect:false}})
+```
+Stop pestering me and just read the comments in the code already!
 
 # Other cool stuff
 What else can I do with this package? Theres some cool stuff you can do with this package, well bascially everything the original one can do.
