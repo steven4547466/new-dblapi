@@ -460,7 +460,7 @@ class DblAPI extends EventEmitter{
     if(!this.client) throw new Error("No client provided in constructor.")
     if(this.client.shard){
       this.client.shard.broadcastEval('this.guilds.size').then(results => {
-        results.reduce((prev, val) => prev + val, 0)
+        results = results.reduce((prev, val) => prev + val, 0)
         let count = parseInt(results)
         let postData = JSON.stringify({
           server_count: count
