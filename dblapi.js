@@ -160,7 +160,7 @@ class DblAPI extends EventEmitter{
               "thumbnail": {
                 "url": this.client.user.displayAvatarURL
               },
-              "fields": [{"name":"Client ratelimited","value": this.client.shard ? `Shard: ${this.client.shard.id}` : "​"},{"name":"Request limit","value":`${info.requestLimit}`},{"name":"Path","value":`${info.path}`}]
+              "fields": [{"name":"Client ratelimited","value": this.client.shard ? `Shard: ${this.client.shard.id}` : "​"},{"name":"Path","value":`${info.path}`}]
             }
             try{
               this.logsHook.send({embeds: [content]})
@@ -436,7 +436,7 @@ class DblAPI extends EventEmitter{
         }
         if(voter.avatar) var icon = `https://cdn.discordapp.com/avatars/${vote.user}/${voter.avatar}.png`
         else var icon = "https://discordapp.com/assets/dd4dbc0016779df1378e7812eabaa04d.png"
-        let embed = {
+        let embed = { 
           "author": {
             "name": voter.username || "New Vote",
             "icon_url": icon || "https://discordapp.com/assets/dd4dbc0016779df1378e7812eabaa04d.png"
