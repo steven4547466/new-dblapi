@@ -434,11 +434,8 @@ class DblAPI extends EventEmitter{
             fields.push({"name": name, "value": value})
           }
         }
-        if(voter.avatar){
-          var icon = `https://cdn.discordapp.com/avatars/${vote.user}/${voter.avatar}.png`
-          }else{
-            var icon = `https://discordapp.com/assets/dd4dbc0016779df1378e7812eabaa04d.png`
-            }
+        if(voter.avatar) var icon = `https://cdn.discordapp.com/avatars/${vote.user}/${voter.avatar}.png`
+        else var icon = "https://discordapp.com/assets/dd4dbc0016779df1378e7812eabaa04d.png"
         let embed = {
           "author": {
             "name": voter.username || "New Vote",
