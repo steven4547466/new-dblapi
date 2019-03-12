@@ -506,13 +506,15 @@ class DblAPI extends EventEmitter{
         if(res.statusCode == 401) throw new Error("Unauthorized, invalid DBL token.")
         res.on('data', (d) => {
           console.info(`Post status code: ${res.statusCode}`)
-          if(res.statusCode == 200) console.info(`${count} servers posted successfully`)
+          if(res.statusCode == 200){ 
+            console.info(`${count} servers posted successfully`)
+            this.emit("posted", count)
+          }
         })
       })
       post.write(postData)
       post.end()
       post.on('error', (err) => console.error(err))
-      this.emit("posted", count)
     }
   }
 }
