@@ -6,25 +6,26 @@ const EventEmitter = require('events')
 class DblAPI extends EventEmitter{
   /**
    * Creates a new instance.
-   * @param {string} token A discordbots.org token.
+   * @param {String} token A discordbots.org token.
    * @param {Object} [options] Options for the constructor.
    * @param {number} [options.delay = 1800000] Delay between posting stats, defaults to 1800000, cannot be below 900000. 0 to disable.
    * @param {number} [options.port] The port for the vote webhook to run on.
-   * @param {string} [options.auth] The authorization for your webhook, must be the same that is set in the edit page of your bot.
-   * @param {string} [options.path = '/vote/'] The path of the webhook to listen on. Defaults to '/vote/'
+   * @param {String} [options.auth] The authorization for your webhook, must be the same that is set in the edit page of your bot.
+   * @param {String} [options.path = '/vote/'] The path of the webhook to listen on. Defaults to '/vote/'
    * @param {Object} [options.voteEmbed] The options for the vote embed.
-   * @param {string} [options.voteEmbed.url] A discord guild webhook url.
+   * @param {String} [options.voteEmbed.url] A discord guild webhook url.
    * @param {Array [Object]} [options.voteEmbed.fields] An array of objects to use as fields in the embed. Must contain a 'name' key and a 'value' key. {user} will be replaced with the voters username and {id} will be replace with the voters id.
-   * @param {string} [options.voteEmbed.title = 'New Vote'] A string to use as the title. Defaults to 'New Vote'.
-   * @param {string} [options.voteEmbed.color = Random] A hex string to use as the color. Defaults to a random color.
-   * @param {string} [options.voteEmbed.thumbnail] A url to use as the thumbnail of the embed.
-   * @param {Object} [options.logsHook.url] A url to a discord webhook.
-   * @param {boolean} [options.logsHook.errors]
-   * @param {boolean} [options.logsHook.disconnect]
-   * @param {boolean} [options.logsHook.reconnect]
-   * @param {boolean} [options.logsHook.resume]
-   * @param {boolean} [options.logsHook.rateLimit]
-   * @param {boolean} [options.logsHook.post]
+   * @param {String} [options.voteEmbed.title = 'New Vote'] A string to use as the title. Defaults to 'New Vote'.
+   * @param {String} [options.voteEmbed.color = Random] A hex string to use as the color. Defaults to a random color.
+   * @param {String} [options.voteEmbed.thumbnail] A url to use as the thumbnail of the embed.
+   * @param {Object} [options.logsHook] The options for a log webhook.
+   * @param {String} [options.logsHook.url] A string to a logHook url (Discord webhook).
+   * @param {boolean} [options.logsHook.errors = true] Logs errors.
+   * @param {boolean} [options.logsHook.disconnect = true] Logs disconnects.
+   * @param {boolean} [options.logsHook.reconnect = true] Logs reconnect attempts.
+   * @param {boolean} [options.logsHook.resume = true] Logs websocket resuming.
+   * @param {boolean} [options.logsHook.rateLimit = true] Logs ratelimiting.
+   * @param {boolean} [options.logsHook.post = true] Logs server count posting.
    * @param {any} [client] A discord.js client, will auto post stats if not disabled.
    */
   constructor(token, options, client){
@@ -246,7 +247,7 @@ class DblAPI extends EventEmitter{
 
   /**
    * Gets a user from the discordbots.org api.
-   * @param {string} id A user id.
+   * @param {String} id A user id.
    * @returns {Promise<Object>}
    */
   async getUser(id){
@@ -266,7 +267,7 @@ class DblAPI extends EventEmitter{
 
   /**
    * Gets a bot from the discordbots.org api.
-   * @param {string} [id = this.client.user.id] A bot id, defaults to the current clients id.
+   * @param {String} [id = this.client.user.id] A bot id, defaults to the current clients id.
    * @param {boolean} [votes = false] A boolean to return last 1000 votes or a bot.
    * @returns {Promise<Object>} OR {Promise<Array>}
    */
@@ -293,11 +294,11 @@ class DblAPI extends EventEmitter{
   /**
    * Get bots from discordbots.org
    * @param {Object} [query] A search query.
-   * @param {number} [limit] A search limit.
-   * @param {number} [offset] A set offset to skip.
-   * @param {string} [search] A search string in the format of `field: value field2: value2`
-   * @param {string} [sort] A field to sort by, add `-` at the beginning to reverse
-   * @param {string} [fields] The fields to search, comma separated.
+   * @param {number} [query.limit] A search limit.
+   * @param {number} [query.offset] A set offset to skip.
+   * @param {String} [query.search] A search string in the format of `field: value field2: value2`
+   * @param {String} [query.sort] A field to sort by, add `-` at the beginning to reverse
+   * @param {String} [query.fields] The fields to search, comma separated.
    * @returns {Promise<Object>}
    */
   async getBots(query = {}){
@@ -324,7 +325,7 @@ class DblAPI extends EventEmitter{
 
   /**
    * Check if a user has voted.
-   * @param {string} id A user id.
+   * @param {String} id A user id.
    * @returns {Promise<boolean>}
    */
   async checkVote(id){
@@ -345,7 +346,7 @@ class DblAPI extends EventEmitter{
 
   /**
    * Get a bots stats.
-   * @param {string} [id] A bots id.
+   * @param {String} [id] A bots id.
    * @returns {Promise<Object>}
    */
   async getStats(id){
@@ -366,16 +367,16 @@ class DblAPI extends EventEmitter{
 
   /**
    * Gets a bots widget.
-   * @param {string} [id = this.client.user.id] A bots id defaulting to this.client.user.id.
+   * @param {String} [id = this.client.user.id] A bots id defaulting to this.client.user.id.
    * @param {Object} [opts] An object with options.
-   * @param {string} [opts.topcolor] The top color.
-   * @param {string} [opts.middlecolor] The middle color.
-   * @param {string} [opts.usernamecolor] The username color.
-   * @param {string} [opts.certifiedcolor] The certified color.
-   * @param {string} [opts.datacolor] The data color.
-   * @param {string} [opts.labelcolor] The label color.
-   * @param {string} [opts.highlightcolor] The highlight color.
-   * @returns {string}
+   * @param {String} [opts.topcolor] The top color.
+   * @param {String} [opts.middlecolor] The middle color.
+   * @param {String} [opts.usernamecolor] The username color.
+   * @param {String} [opts.certifiedcolor] The certified color.
+   * @param {String} [opts.datacolor] The data color.
+   * @param {String} [opts.labelcolor] The label color.
+   * @param {String} [opts.highlightcolor] The highlight color.
+   * @returns {String}
    */
   async getWidget(id, opts){
     if(!id) id = this.client.user.id
