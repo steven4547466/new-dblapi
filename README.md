@@ -1,6 +1,4 @@
-# Simple, Easy, discordbots.org API wrapper. Thing
-new-dblapi was made to be very easy to use. Is it better than the original? No idea, I made this out of pure boredom, **most** of it is tested to work.
-
+# Simple, Easy, discordbots.org API wrapper.
 ```
 npm i new-dblapi
 ```
@@ -16,7 +14,7 @@ const dbl = new DBL(token[, client])
 ```
 ***
 # First steps
-It is very important you actually have a discordbots.org token for your bot to use this. In matter of fact, it doesn't work without it! So what does an amazing programmer like yourself do? Head to https://discordbots.org/api/docs#mybots, make sure your signed in.
+It is very important you actually have a discordbots.org token for your bot to use this. In matter of fact, it doesn't work without it! Head to https://discordbots.org/api/docs#mybots, make sure your signed in.
 Nothing appearing? Make sure you have the right account and your bot is since verified!
 
 # Then what?
@@ -36,21 +34,20 @@ Look familiar? It should, it's just above this.
 Options is an object consisting of 4 main things: delay (posting stats), port, auth and path. All 3, port, auth and path are for the webhook. **If you provide a port, you must provide an auth, but path is optional**. So what does it look like?
 ```javascript
 const DBL = require('new-dblapi')
-const dbl = new DBL('your-dbl-token', {delay: 4444444, port: 5555, auth: "6666", path: "77777"}, client)
+const dbl = new DBL('your-dbl-token', {delay: 5000000, port: 5555, auth: "SomeAuth", path: "dblhook"}, client)
 ```
-Happy? I hope you are, it took 10 minutes to make.
 ***
 # Webhook Stuff
 So you want a webhook to receive your votes? This is very easy to do and is all done in the *optional* options. That's right you don't even need them, but if you want a webhook, you do. Theres only two required parameters to get webhooks working all good, that's a port for the server to run on and your webhook's authorization.
-What if I want to be cool and run it on a different path? That's easy to do, when constructing it, provide a path. Is this too hard to understand? Let me break it down.
+You can also provide a cool custom path too!
 ```javascript
 const DBL = require('new-dblapi')
-const dbl = new DBL(token, {port: 5000, auth: "StinkyAuthorization", path:"notmyvotes"})
+const dbl = new DBL(token, {port: 5000, auth: "Auth", path:"voteswebhook"})
 dbl.on('vote', (vote) => {
   // Your stuff here, you cant have it all!
 })
 ```
-**The default path is /vote/**, notice the `/` at the end, this may be important, I didn't test it without it and I don't want to, but it might be important.
+**The default path is /vote/**, notice the `/` at the end, this is important, make sure it has that ending slash for any path you choose in your dbl webhook options on your edit page.
 
 So what does `vote` return? Vote returns exactly what the original dblapi does. This means you get a user by doing `vote.user`. Cool, eh? No? Oh, I'll go cry in a corner.
 ***
@@ -67,48 +64,46 @@ const dbl = new DBL(token, {port: 5000, auth: "StinkyAuthorization", path:"notmy
 **This does require a client. Fields must have a name and value.** You can use {user} or {id} in fields to replace it with the username or their id.
 
 # Logs and Stuff
-So you want some logs? I'll give you some logs. If you enable this, you can log: errors, disconnects, reconnecting, websocket resuming, rate limiting and server count posting. **Requires a client**
+There are some client logs that you can use too. If you enable this, you can log: errors, disconnects, reconnecting, websocket resuming, rate limiting and server count posting. **Requires a client**, this has to do with the discord client, nothing to do with dbl itself.
 
-How do you do this? Just like the vote embed, it's an object inside of the options called logsHook. What's in logsHook, you may ask. I'll tell you! You have the 1 required parameter if you use this: url. It's a url to a discord webhook. 
+How do you do this? Just like the vote embed, it's an object inside of the options called logsHook. You have the 1 required parameter if you use this: url. It's a url to a discord webhook. 
 
 Apart from that you have 6 booleans, none are required and are enabled by default. So you have: errors, disconnect, reconnect, resume, rateLimit and post.
 
 Like all the other methods, it's simple to set up.
 ```javascript
 const DBL = require('new-dblapi')
-const dbl = new DBL(token, {logsHook: {url:"discordWebhookPls", resume:false, disconnect:false}}, client)
+const dbl = new DBL(token, {logsHook: {url:"hookUrl", resume:false, disconnect:false}}, client)
 ```
-Stop pestering me and just read the comments in the code already!
+Extra comments and documentation are in the code!
 
 # Other cool stuff
 What else can I do with this package? Theres some cool stuff you can do with this package, well bascially everything the original one can do.
 
 How do I post stats? This one's easy, just provide a client (**discord.js client**). If you dont provide a delay in `options`, it will automatically be 30 minutes, the minimum is 15 minutes (0 to disable).
 
-But, what are the cool methods? There are 8 whole methods, wow! So what do we got to work with? `getUser(id)`, `getBot([id[, votes]])` (votes is false by default, add true to get last 1000 votes), `getBots([query])`, `checkVote(id)`, `getStats([id])`, `getWidget([id[, options])`, `postStats()`, `request(opts)`
+What about other methods? There are 8 whole methods, wow! So what do we got to work with? `getUser(id)`, `getBot([id[, votes]])` (votes is false by default, add true to get last 1000 votes), `getBots([query])`, `checkVote(id)`, `getStats([id])`, `getWidget([id[, options])`, `postStats([client])`
 
-What does all this do? I have no idea to be honest I made this with 10 minutes of free time and tested it once #gooddev. 
 ***
-`getUser(id)` gets a user, who'da thunk it? It returns a user from the discordbots api
+`getUser(id)` Returns a user from the discordbots api
 
-`getBot([id[, votes]])` gets a bot, wow! Another obvious method! It will get your bot by default and if you put votes to true, it will return an array of the last 1000 votes. Cool.
+`getBot([id[, votes]])` Gets a bot from the discordbots api. It will get your bot by default and if you put votes to true, it will return an array of the last 1000 votes.
 
-`getBots([query])` gets multiple bots. Query options are limit, offset, search, sort and fields.
+`getBots([query])` Gets multiple bots. Query options are limit, offset, search, sort and fields.
 
-`checkVote(id)` will... check... a... users vote! It returns 1, or 0. 1 being yes, 0 being no (true/false, if you're feeling like that **This is a joke, it actually returns true/false don't get mad, but in JavaScript 1 = true and 0 = false anyways.**).
+`checkVote(id)` Checks a users vote. Returns true or galse.
 
-`getStats([id])` get's a **bots** stats if it's listed on discordbots.org. It will return the full bot object.
+`getStats([id])` Gets a **bots** stats if it's listed on discordbots.org. It will return the full bot object.
 
-`getWidget([id[, options])` get's a bots widget, has 7 options (object): topcolor, middlecolor, usernamecolor, certifiedcolor, datacolor, labelcolor and highlightcolor.
+`getWidget([id[, options])` Gets a bots widget, has 7 options (object): topcolor, middlecolor, usernamecolor, certifiedcolor, datacolor, labelcolor and highlightcolor.
 
-`postStats()` I refuse to explain this one. Requires that you had a client when calling the constructor. 
+`postStats([client])` Posts your bot's stats. Requires that you had a client when calling the constructor OR you provided a client when calling. 
 
-`request(opts)` Uses node's https module to make a request. It's used for making requests to the dbl site, but you can use it if you give it proper options. Does not post.
 ***
-So this was made in 10 minutes, will I keep it updated? Yes.
+This project may stay updated when I get time.
 
 Will I add requests from the github? Yes.
 
-Will I add support for eris? idk.
+Will I add support for eris? Maybe, haven't decided.
 
 Do I use new-dblapi? Yes, I made it, so I'll use it.

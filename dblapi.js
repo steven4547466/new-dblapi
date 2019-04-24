@@ -456,12 +456,40 @@ class DblAPI extends EventEmitter{
   /**
    * Posts the bots stats to discordbots.org.
    */
-  postStats(){
-    if(!this.client) throw new Error("No client provided in constructor.")
-    if(this.client.shard){
-      this.client.shard.broadcastEval('this.guilds.size').then(results => {
-        results = results.reduce((prev, val) => prev + val, 0)
-        let count = parseInt(results)
+  postStats(client){
+    if(!client && !this.client) throw new Error("No client provided in constructor and no client given.")
+    if(this.client){
+      if(this.client.shard){
+        this.client.shard.broadcastEval('this.guilds.size').then(results => {
+          results = results.reduce((prev, val) => prev + val, 0)
+          let count = parseInt(results)
+          let postData = JSON.stringify({
+            server_count: count
+          })
+          let opts = {
+            'hostname': 'discordbots.org',
+            'port': 443,
+            'path': `/api/bots/${this.client.user.id}/stats`,
+            'method': 'POST',
+            'headers': {
+              'Authorization': this.token,
+              'Content-Type': 'application/json'
+            },
+          }
+          let post = https.request(opts, (res) => {
+            if(res.statusCode == 401) throw new Error("Unauthorized, invalid DBL token.")
+            res.on('data', (d) => {
+              console.info(`Post status code: ${res.statusCode}`)
+              if(res.statusCode == 200) console.info(`${count} servers posted successfully`)
+            })
+          })
+          post.write(postData)
+          post.end()
+          post.on('error', (err) => console.error(err))
+          this.emit("posted", count)
+        })
+      }else {
+        let count = this.client.guilds.size
         let postData = JSON.stringify({
           server_count: count
         })
@@ -479,42 +507,75 @@ class DblAPI extends EventEmitter{
           if(res.statusCode == 401) throw new Error("Unauthorized, invalid DBL token.")
           res.on('data', (d) => {
             console.info(`Post status code: ${res.statusCode}`)
-            if(res.statusCode == 200) console.info(`${count} servers posted successfully`)
+            if(res.statusCode == 200){ 
+              console.info(`${count} servers posted successfully`)
+              this.emit("posted", count)
+            }
           })
         })
         post.write(postData)
         post.end()
         post.on('error', (err) => console.error(err))
-        this.emit("posted", count)
-      })
-    }else {
-      let count = this.client.guilds.size
-      let postData = JSON.stringify({
-        server_count: count
-      })
-      let opts = {
-        'hostname': 'discordbots.org',
-        'port': 443,
-        'path': `/api/bots/${this.client.user.id}/stats`,
-        'method': 'POST',
-        'headers': {
-          'Authorization': this.token,
-          'Content-Type': 'application/json'
-        },
       }
-      let post = https.request(opts, (res) => {
-        if(res.statusCode == 401) throw new Error("Unauthorized, invalid DBL token.")
-        res.on('data', (d) => {
-          console.info(`Post status code: ${res.statusCode}`)
-          if(res.statusCode == 200){ 
-            console.info(`${count} servers posted successfully`)
-            this.emit("posted", count)
+    }else if(client){
+      if(client.shard){
+        client.shard.broadcastEval('this.guilds.size').then(results => {
+          results = results.reduce((prev, val) => prev + val, 0)
+          let count = parseInt(results)
+          let postData = JSON.stringify({
+            server_count: count
+          })
+          let opts = {
+            'hostname': 'discordbots.org',
+            'port': 443,
+            'path': `/api/bots/${client.user.id}/stats`,
+            'method': 'POST',
+            'headers': {
+              'Authorization': this.token,
+              'Content-Type': 'application/json'
+            },
           }
+          let post = https.request(opts, (res) => {
+            if(res.statusCode == 401) throw new Error("Unauthorized, invalid DBL token.")
+            res.on('data', (d) => {
+              console.info(`Post status code: ${res.statusCode}`)
+              if(res.statusCode == 200) console.info(`${count} servers posted successfully`)
+            })
+          })
+          post.write(postData)
+          post.end()
+          post.on('error', (err) => console.error(err))
+          this.emit("posted", count)
         })
-      })
-      post.write(postData)
-      post.end()
-      post.on('error', (err) => console.error(err))
+      }else {
+        let count = client.guilds.size
+        let postData = JSON.stringify({
+          server_count: count
+        })
+        let opts = {
+          'hostname': 'discordbots.org',
+          'port': 443,
+          'path': `/api/bots/${client.user.id}/stats`,
+          'method': 'POST',
+          'headers': {
+            'Authorization': this.token,
+            'Content-Type': 'application/json'
+          },
+        }
+        let post = https.request(opts, (res) => {
+          if(res.statusCode == 401) throw new Error("Unauthorized, invalid DBL token.")
+          res.on('data', (d) => {
+            console.info(`Post status code: ${res.statusCode}`)
+            if(res.statusCode == 200){ 
+              console.info(`${count} servers posted successfully`)
+              this.emit("posted", count)
+            }
+          })
+        })
+        post.write(postData)
+        post.end()
+        post.on('error', (err) => console.error(err))
+      }
     }
   }
 }
