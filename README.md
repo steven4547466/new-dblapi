@@ -49,7 +49,7 @@ dbl.on('vote', (vote) => {
 ```
 **The default path is /vote/**, notice the `/` at the end, this is important, make sure it has that ending slash for any path you choose in your dbl webhook options on your edit page.
 
-So what does `vote` return? Vote returns exactly what the original dblapi does. This means you get a user by doing `vote.user`. Cool, eh? No? Oh, I'll go cry in a corner.
+So what does `vote` return? Vote returns exactly what the original dblapi does. This means you get a user by doing `vote.user`.
 ***
 # Vote embed option
 So you want to send vote embeds? This makes that very easy. **Inside** of your options object, add a voteEmbed object, so it'd look like this `const dbl = new DBL('your-dbl-token', {delay: 4444444, port: 5555, auth: "6666", path: "77777", voteEmbed:{}}, client)` 
