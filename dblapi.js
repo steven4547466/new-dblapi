@@ -18,14 +18,6 @@ class DblAPI extends EventEmitter{
    * @param {String} [options.voteEmbed.title = 'New Vote'] A string to use as the title. Defaults to 'New Vote'.
    * @param {String} [options.voteEmbed.color = Random] A hex string to use as the color. Defaults to a random color.
    * @param {String} [options.voteEmbed.thumbnail] A url to use as the thumbnail of the embed.
-   * @param {Object} [options.logsHook] The options for a log webhook.
-   * @param {String} [options.logsHook.url] A string to a logHook url (Discord webhook).
-   * @param {boolean} [options.logsHook.errors = true] Logs errors.
-   * @param {boolean} [options.logsHook.disconnect = true] Logs disconnects.
-   * @param {boolean} [options.logsHook.reconnect = true] Logs reconnect attempts.
-   * @param {boolean} [options.logsHook.resume = true] Logs websocket resuming.
-   * @param {boolean} [options.logsHook.rateLimit = true] Logs ratelimiting.
-   * @param {boolean} [options.logsHook.post = true] Logs server count posting.
    * @param {any} [client] A discord.js client, will auto post stats if not disabled.
    */
   constructor(token, options, client){
@@ -35,13 +27,13 @@ class DblAPI extends EventEmitter{
     }
     this.token = token
 
-    if(isLib('discord.js', options)){
+    if(isLib(options)){
       client = options
       options = {}
     }
     this.options = options || {}
 
-    if(client && isLib('discord.js', client)){
+    if(client && isLib(client)){
       this.client = client
       if(!this.options.delay) this.options.delay = 1800000
       if(this.options.delay != 0){
@@ -62,7 +54,6 @@ class DblAPI extends EventEmitter{
       auth,
       path,
       voteEmbed,
-      logsHook
     } = this.options
 
     this.port = port
@@ -71,11 +62,11 @@ class DblAPI extends EventEmitter{
     this.path = path
 
     if(port){
-      if(!auth) throw new Error("No auth provided with port.")
+      if(!auth) throw new Error("No auth provided with port. This is required as a security measure.")
       fastify.post(`/${path}/`, (req, res) => this.onVote(req, res))
       fastify.listen(port, '0.0.0.0', (err, address) => {
         if(err) throw new Error(`Error starting server: ${err}`)
-        console.info(`Webhook listening at ${address}/${path}/`)
+        console.info(`[new-dblapi] Webhook listening at ${address}/${path}/`)
       })
     }
     if(voteEmbed){
@@ -84,104 +75,6 @@ class DblAPI extends EventEmitter{
       this.client.on('ready', () => {
         this.setVoteHook(voteEmbed)
         this.voteHookOptions = voteEmbed
-      })
-    }
-    if(logsHook){
-      if(!this.client) throw new Error("You must provide a client to use the logsHook feature")
-      if(!logsHook.url) throw new Error("Webhook url must be provided when using logsHook")
-      this.client.on('ready', () => {
-        this.setLogsHook(logsHook)
-        this.logsHookOptions = logsHook
-        if((this.logsHookOptions.errors === true || !this.logsHookOptions.errors) && this.logsHookOptions.errors !== false){
-          this.client.on('error', (error) => {
-            let content = {
-              "title": "Client error",
-              "color": 16711680,
-              "thumbnail": {
-                "url": this.client.user.displayAvatarURL
-              },
-              "fields": [{ "name": "Error", "value": error.message}, { "name": "File", "value": error.fileName}, { "name": "Estimated line", "value": error.lineNumber}]
-            }
-            try{
-              this.logsHook.send({embeds: [content]})
-            }catch(e){console.error(e)}
-          })
-        }
-        if((this.logsHookOptions.disconnect === true || !this.logsHookOptions.disconnect) && this.logsHookOptions.disconnect !== false){
-          this.client.on('disconnect', (event) => {
-            let content = {
-              "title": "Client disconnected",
-              "color": 16711680,
-              "thumbnail": {
-                "url": this.client.user.displayAvatarURL
-              },
-              "fields": [{"name":"Client has disconnected","value": this.client.shard ? `Shard: ${this.client.shard.id}` : "​"}, {"name":"Websocket close event","value":`Code: ${event.code}, Reason: ${event.reason}, Clean: ${event.wasClean}`}]
-            }
-            try{
-              this.logsHook.send({embeds: [content]})
-            }catch(e){console.error(e)}
-          })
-        }
-        if((this.logsHookOptions.reconnect === true || !this.logsHookOptions.reconnect) && this.logsHookOptions.reconnect !== false){
-          this.client.on('reconnecting', () => {
-            let content = {
-              "title": "Client attempting reconnect",
-              "color": 65280,
-              "thumbnail": {
-                "url": this.client.user.displayAvatarURL
-              },
-              "fields": [{"name":"Client is attempting a reconnect","value": this.client.shard ? `Shard: ${this.client.shard.id}` : "​"}]
-            }
-            try{
-              this.logsHook.send({embeds: [content]})
-            }catch(e){console.error(e)}
-          })
-        }
-        if((this.logsHookOptions.resume === true || !this.logsHookOptions.resume) && this.logsHookOptions.resume !== false){
-          this.client.on('resume', (num) => {
-            let content = {
-              "title": "Client connection to websocket resumed",
-              "color": 65280,
-              "thumbnail": {
-                "url": this.client.user.displayAvatarURL
-              },
-              "fields": [{"name":"Client websocket connection resumed","value": this.client.shard ? `Shard: ${this.client.shard.id}` : "​"}, {"name":"Replayed events", "value":`${num}`}]
-            }
-            try{
-              this.logsHook.send({embeds: [content]})
-            }catch(e){console.error(e)}
-          })
-        }
-        if((this.logsHookOptions.rateLimit === true || !this.logsHookOptions.rateLimit) && this.logsHookOptions.rateLimit !== false){
-          this.client.on('rateLimit', (info) => {
-            let content = {
-              "title": "Client encountered ratelimit",
-              "color": 16711680,
-              "thumbnail": {
-                "url": this.client.user.displayAvatarURL
-              },
-              "fields": [{"name":"Client ratelimited","value": this.client.shard ? `Shard: ${this.client.shard.id}` : "​"},{"name":"Path","value":`${info.path}`}]
-            }
-            try{
-              this.logsHook.send({embeds: [content]})
-            }catch(e){console.error(e)}
-          })
-        }
-        if((this.logsHookOptions.post === true || !this.logsHookOptions.post) && this.logsHookOptions.post !== false){
-          this.on('posted', (count) => {
-            let content = {
-              "title": "Client posted stats.",
-              "color": 65280,
-              "thumbnail": {
-                "url": this.client.user.displayAvatarURL
-              },
-              "fields": [{"name":"Count","value": count}]
-            }
-            try{
-              this.logsHook.send({embeds: [content]})
-            }catch(e){console.error(e)}
-          })
-        }
       })
     }
   }
@@ -196,20 +89,7 @@ class DblAPI extends EventEmitter{
     let token = hook[hook.length - 1]
     let webhook = await this.client.fetchWebhook(id, token)
     this.voteHook = webhook
-    console.info(`Vote embed working on webhook id: ${id}`)
-  }
-
-  /**
-   * Sets the logs webhook.
-   * @param {Object} logsHook The logsHook object.
-   */
-  async setLogsHook(logsHook){
-    let hook = logsHook.url.split("/")
-    let id = hook[hook.length - 2]
-    let token = hook[hook.length - 1]
-    let webhook = await this.client.fetchWebhook(id, token)
-    this.logsHook = webhook
-    console.info(`Logs webhook working on id: ${id}`)
+    console.info(`[new-dblapi] Vote embed working on webhook id: ${id}`)
   }
 
   /**
@@ -479,8 +359,8 @@ class DblAPI extends EventEmitter{
           let post = https.request(opts, (res) => {
             if(res.statusCode == 401) throw new Error("Unauthorized, invalid DBL token.")
             res.on('data', (d) => {
-              console.info(`Post status code: ${res.statusCode}`)
-              if(res.statusCode == 200) console.info(`${count} servers posted successfully`)
+              console.info(`[new-dblapi] Post status code: ${res.statusCode}`)
+              if(res.statusCode == 200) console.info(`[new-dblapi] ${count} servers posted successfully`)
             })
           })
           post.write(postData)
@@ -506,9 +386,9 @@ class DblAPI extends EventEmitter{
         let post = https.request(opts, (res) => {
           if(res.statusCode == 401) throw new Error("Unauthorized, invalid DBL token.")
           res.on('data', (d) => {
-            console.info(`Post status code: ${res.statusCode}`)
+            console.info(`[new-dblapi] Post status code: ${res.statusCode}`)
             if(res.statusCode == 200){ 
-              console.info(`${count} servers posted successfully`)
+              console.info(`[new-dblapi] ${count} servers posted successfully`)
               this.emit("posted", count)
             }
           })
@@ -538,8 +418,8 @@ class DblAPI extends EventEmitter{
           let post = https.request(opts, (res) => {
             if(res.statusCode == 401) throw new Error("Unauthorized, invalid DBL token.")
             res.on('data', (d) => {
-              console.info(`Post status code: ${res.statusCode}`)
-              if(res.statusCode == 200) console.info(`${count} servers posted successfully`)
+              console.info(`[new-dblapi] Post status code: ${res.statusCode}`)
+              if(res.statusCode == 200) console.info(`[new-dblapi] ${count} servers posted successfully`)
             })
           })
           post.write(postData)
@@ -565,9 +445,9 @@ class DblAPI extends EventEmitter{
         let post = https.request(opts, (res) => {
           if(res.statusCode == 401) throw new Error("Unauthorized, invalid DBL token.")
           res.on('data', (d) => {
-            console.info(`Post status code: ${res.statusCode}`)
+            console.info(`[new-dblapi] Post status code: ${res.statusCode}`)
             if(res.statusCode == 200){ 
-              console.info(`${count} servers posted successfully`)
+              console.info(`[new-dblapi] ${count} servers posted successfully`)
               this.emit("posted", count)
             }
           })
@@ -585,9 +465,9 @@ class DblAPI extends EventEmitter{
  * @returns {boolean}
  */
 
-function isLib(library, client){
+function isLib(client){
   try {
-    const lib = require.cache[require.resolve(library)]
+    const lib = require.cache[require.resolve("discord.js")]
     return lib && client instanceof lib.exports.Client
   } catch (e) {
     return false
