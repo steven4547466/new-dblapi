@@ -1,6 +1,7 @@
 const http = require('http')
 const https = require('https')
 const fastify = require('fastify')()
+const enmap = require('enmap')
 const EventEmitter = require('events')
 
 class DblAPI extends EventEmitter{
@@ -18,6 +19,9 @@ class DblAPI extends EventEmitter{
    * @param {String} [options.voteEmbed.title = 'New Vote'] A string to use as the title. Defaults to 'New Vote'.
    * @param {String} [options.voteEmbed.color = Random] A hex string to use as the color. Defaults to a random color.
    * @param {String} [options.voteEmbed.thumbnail] A url to use as the thumbnail of the embed.
+   * @param {Object} [options.voteLock] An object with the vote lock options.
+   * @param {boolean} [options.voteLock.on] true or false. Would turn vote locking on, defaults to off.
+   * @param {number} [options.voteLock.timeOut] How long a vote should last for. Defaults to 1 day.
    * @param {any} [client] A discord.js client, will auto post stats if not disabled.
    */
   constructor(token, options, client){
@@ -54,8 +58,9 @@ class DblAPI extends EventEmitter{
       auth,
       path,
       voteEmbed,
+      voteLock
     } = this.options
-
+    
     this.port = port
     this.auth = auth
     path = path || "vote"
@@ -63,9 +68,27 @@ class DblAPI extends EventEmitter{
 
     if(port){
       if(!auth) throw new Error("No auth provided with port. This is required as a security measure.")
+      if(voteLock && voteLock.on === true && voteLock.on !== false){
+        if(!voteLock.timeOut) voteLock.timeOut = 86400000
+        this.voteLock = voteLock
+        this.votes = new enmap({
+          name: "votes",
+          autoFetch: true,
+          fetchAll: true
+        })
+        setInterval(() => {
+          for(let [key, val] of this.votes){
+            if(Date.now() - voteLock.timeOut > val){
+              this.votes.delete(key)
+            }
+          }
+        }, 1000 * 60 * 5)
+      }else if(!voteLock || (voteLock && voteLock.on === false)){
+        this.voteLock = {'on':false}
+      }
       fastify.post(`/${path}/`, (req, res) => this.onVote(req, res))
       fastify.listen(port, '0.0.0.0', (err, address) => {
-        if(err) throw new Error(`Error starting server: ${err}`)
+        if(err) throw new Error(`[new-dblapi] Error starting server: ${err}`)
         console.info(`[new-dblapi] Webhook listening at ${address}/${path}/`)
       })
     }
@@ -77,6 +100,17 @@ class DblAPI extends EventEmitter{
         this.voteHookOptions = voteEmbed
       })
     }
+  }
+
+  /**
+   * Gets the vote database
+   * @returns {Promise<Array>}
+   */
+  get db(){
+    return new Promise(async (resolve, reject) => {
+      if(this.voteLock.on == false || !this.voteLock) return reject("Vote locking is turned off.")
+      return resolve(Array.from(this.votes.keys()))
+    })
   }
 
   /**
@@ -295,6 +329,10 @@ class DblAPI extends EventEmitter{
     }else{
       let vote = req.body
       this.emit('vote', vote)
+      if(this.voteLock.on == true){
+        console.log("voteLock on is true")
+        this.votes.set(vote.user, Date.now())
+      }
       if(this.voteHook){
         let voter = await this.getUser(vote.user)
         let fields = []

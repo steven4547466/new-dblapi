@@ -4,7 +4,8 @@
   "description": "A new dbl api.",
   "main": "dblapi.js",
   "dependencies": {
-    "fastify": "^2.0.1"
+    "fastify": "^2.0.1",
+    "enmap": "^4.8.5"
   },
   "devDependencies": {},
   "repository": {

@@ -17,8 +17,18 @@ const dbl = new DBL(token[, client])
 It is very important you actually have a discordbots.org token for your bot to use this. In matter of fact, it doesn't work without it! Head to https://discordbots.org/api/docs#mybots, make sure your signed in.
 Nothing appearing? Make sure you have the right account and your bot is since verified!
 
-# Then what?
-Very good question. After you have a **discord.js** bot (if you don't I don't even know why your here) and a dbl token you call the constructor, it'll look something like:
+I suggest you make this a variable on your client so you can access it anywhere, it's just like setting up any other variable, but instead of `const var_name = 123` it'd be `clent.varname = 123` this would make it a variable on the client.
+```javascript
+const DBL = require('new-dblapi')
+client.dbl = new DBL(token[, options[, client]])
+```
+#### -OR-
+```javascript
+const DBL = require('new-dblapi')
+client.dbl = new DBL(token[, client])
+```
+# Then... 
+After you have a **discord.js** bot (if you don't I don't even know why your here) and a dbl token you call the constructor, it'll look something like:
 ```javascript
 const DBL = require('new-dblapi')
 const dbl = new DBL(token[, options[, client]])
@@ -62,6 +72,15 @@ const DBL = require('new-dblapi')
 const dbl = new DBL(token, {port: 5000, auth: "Auth", path:"votes", voteEmbed:{url:"webhook url",fields:[{name:"name", value:"value"}],color:"00ff00"}}, client)
 ```
 **This does require a client. Fields must have a name and value.** You can use {user} or {id} in fields to replace it with the username or their id.
+
+You can now also have a voteLock feature that will store votes for a certain amount of time. This is in the `voteLock` object. It has "on" and "timeOut". On is a boolean that defines if it's on or not and timeOut defines the time (in milliseconds) a vote will last for.
+```javascript
+const DBL = require('new-dblapi')
+const dbl = new DBL('your-dbl-token', {delay: 5000000, port: 5555, auth: "Auth", path: "dblhook", voteLost:{on:true,timeOut:50000}}, client)
+```
+You can check votes by doing `dbl.db.includes(id)`. `dbl.db` will return a promise array of id's of people who have voted within your timeOut time.
+
+**Timeouts will not be exact, it will check the database every 5 minutes and delete ones past the voteLock.timeOut time**
 
 # Other cool stuff
 What else can I do with this package? Theres some cool stuff you can do with this package, well bascially everything the original one can do.
