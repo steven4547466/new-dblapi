@@ -20,14 +20,17 @@ class DblAPI extends EventEmitter{
    * @param {String} [options.voteEmbed.color = Random] A hex string to use as the color. Defaults to a random color.
    * @param {String} [options.voteEmbed.thumbnail] A url to use as the thumbnail of the embed.
    * @param {Object} [options.voteLock] An object with the vote lock options.
-   * @param {boolean} [options.voteLock.on] true or false. Would turn vote locking on, defaults to off.
-   * @param {number} [options.voteLock.timeOut] How long a vote should last for. Defaults to 1 day.
+   * @param {boolean} [options.voteLock.on = false] true or false. Would turn vote locking on, defaults to off.
+   * @param {number} [options.voteLock.timeOut = 86400000] How long a vote should last for. Defaults to 1 day.
    * @param {any} [client] A discord.js client, will auto post stats if not disabled.
    */
   constructor(token, options, client){
     super()
     if(!token){
-      throw new Error("Missing required parameter: token.")
+      throw new Error("[new-dblapi] Missing required parameter: token.")
+    }
+    if(typeof token != "string"){
+      throw new Error("[new-dblapi] Token must be a string.")
     }
     this.token = token
 
@@ -41,7 +44,7 @@ class DblAPI extends EventEmitter{
       this.client = client
       if(!this.options.delay) this.options.delay = 1800000
       if(this.options.delay != 0){
-        if(this.options.delay < 900000) throw new Error("Delay can not be less than 15 minutes (900000 ms).")
+        if(this.options.delay < 900000) throw new Error("[new-dblapi] Delay can not be less than 15 minutes (900000 ms).")
         this.client.on('ready', () => {
           this.postStats()
           setInterval(() => {
@@ -50,7 +53,7 @@ class DblAPI extends EventEmitter{
         })
       }
     }else if(client){
-      throw new Error("Client provided is not a discord.js client.")
+      throw new Error("[new-dblapi] Client provided is not a discord.js client.")
     }
 
     let {
@@ -67,7 +70,7 @@ class DblAPI extends EventEmitter{
     this.path = path
 
     if(port){
-      if(!auth) throw new Error("No auth provided with port. This is required as a security measure.")
+      if(!auth) throw new Error("[new-dblapi] No auth provided with port. This is required as a security measure.")
       if(voteLock && voteLock.on === true && voteLock.on !== false){
         if(!voteLock.timeOut) voteLock.timeOut = 86400000
         this.voteLock = voteLock
@@ -93,8 +96,8 @@ class DblAPI extends EventEmitter{
       })
     }
     if(voteEmbed){
-      if(!this.client) throw new Error("You must provide a client to use the voteEmbed feature")
-      if(!voteEmbed.url) throw new Error("Webhook url must be provided when using voteEmbed")
+      if(!this.client) throw new Error("[new-dblapi] You must provide a client to use the voteEmbed feature")
+      if(!voteEmbed.url) throw new Error("[new-dblapi] Webhook url must be provided when using voteEmbed")
       this.client.on('ready', () => {
         this.setVoteHook(voteEmbed)
         this.voteHookOptions = voteEmbed
@@ -108,7 +111,7 @@ class DblAPI extends EventEmitter{
    */
   get db(){
     return new Promise(async (resolve, reject) => {
-      if(this.voteLock.on == false || !this.voteLock) return reject("Vote locking is turned off.")
+      if(!this.voteLock || this.voteLock.on == false) return reject("Vote locking is turned off.")
       return resolve(Array.from(this.votes.keys()))
     })
   }
@@ -135,22 +138,22 @@ class DblAPI extends EventEmitter{
     return new Promise((resolve, reject) => {
       let data = ''
       let request = https.request(opts, (res) => {
-        if(res.statusCode == 401) throw new Error("Unauthorized, invalid DBL token.")
-        else if(res.statusCode == 404) throw new Error("404, not found. (Invalid id?)")
-        else if(res.statusCode == 403) throw new Error("403, forbidden")
-        else if(res.statusCode == 400) throw new Error("Bad request")
+        if(res.statusCode == 401) throw new Error("[new-dblapi] Unauthorized, invalid DBL token.")
+        else if(res.statusCode == 404) throw new Error("[new-dblapi] 404, not found. (Invalid id?)")
+        else if(res.statusCode == 403) throw new Error("[new-dblapi] 403, forbidden")
+        else if(res.statusCode == 400) throw new Error("[new-dblapi] 400, Bad request")
         res.on('data', (d) => {
           if(res.statusCode.toString().startsWith("2")){
             data += d
           }else{
-            throw new Error(`Non-200 code: ${res.statusCode}`)
+            throw new Error(`[new-dblapi] Non-200 code: ${res.statusCode}`)
           }
         })
         res.on('end', () => {
           if(data){
             resolve(data)
           }else{
-            reject(`Non-200 code: ${res.statusCode}`)
+            reject(`[new-dblapi] Non-200 code: ${res.statusCode}`)
           }
         })
       })
@@ -243,8 +246,8 @@ class DblAPI extends EventEmitter{
    * @returns {Promise<boolean>}
    */
   async checkVote(id){
-    if(!id) throw new Error("checkVote requires a user id.")
-    if(!this.client) throw new Error("checkVote requires a client.")
+    if(!id) throw new Error("[new-dblapi] checkVote requires a user id.")
+    if(!this.client) throw new Error("[new-dblapi] checkVote requires a client.")
     let opts = {
       'hostname': 'discordbots.org',
       'port': 443,
@@ -265,7 +268,7 @@ class DblAPI extends EventEmitter{
    */
   async getStats(id){
     if(!id) id = this.client.user.id
-    if(!id) throw new Error("getStats requires a client OR a supplied id.")
+    if(!id) throw new Error("[new-dblapi] getStats requires a client OR a supplied id.")
     let opts = {
       'hostname': 'discordbots.org',
       'port': 443,
@@ -294,7 +297,7 @@ class DblAPI extends EventEmitter{
    */
   async getWidget(id, opts){
     if(!id) id = this.client.user.id
-    if(!id) throw new Error("getWidget requires a client OR a supplied id.")
+    if(!id) throw new Error("[new-dblapi] getWidget requires a client OR a supplied id.")
     opts = opts || {}
     let {
       topcolor,
@@ -325,24 +328,23 @@ class DblAPI extends EventEmitter{
    */
   async onVote(req, res){
     if(req.headers.authorization !== this.auth){
-      res.status(401).send("Unauthorized")
+      res.status(401).send("[new-dblapi] Unauthorized")
     }else{
       let vote = req.body
       this.emit('vote', vote)
       if(this.voteLock.on == true){
-        console.log("voteLock on is true")
         this.votes.set(vote.user, Date.now())
       }
       if(this.voteHook){
         let voter = await this.getUser(vote.user)
         let fields = []
         if(this.voteHookOptions.fields){
-          if(this.voteHookOptions.fields.length < 1) throw new Error("voteHook.fields must be an array with atleast 1 entry")
+          if(this.voteHookOptions.fields.length < 1) throw new Error("[new-dblapi] voteHook.fields must be an array with atleast 1 entry")
           for(let i in this.voteHookOptions.fields){
             let cur = this.voteHookOptions.fields[i]
             let name = cur.name
             let value = cur.value
-            if(!name || !value) throw new Error("One of the provided voteHook.fields does not have a name or value")
+            if(!name || !value) throw new Error("[new-dblapi] One of the provided voteHook.fields does not have a name or value")
             name = name.toString()
             value = value.toString()
             name = name.replace(/{user}/g, voter.username)
@@ -375,7 +377,7 @@ class DblAPI extends EventEmitter{
    * Posts the bots stats to discordbots.org.
    */
   postStats(client){
-    if(!client && !this.client) throw new Error("No client provided in constructor and no client given.")
+    if(!client && !this.client) throw new Error("[new-dblapi] No client provided in constructor and no client given.")
     if(this.client){
       if(this.client.shard){
         this.client.shard.broadcastEval('this.guilds.size').then(results => {
@@ -395,7 +397,7 @@ class DblAPI extends EventEmitter{
             },
           }
           let post = https.request(opts, (res) => {
-            if(res.statusCode == 401) throw new Error("Unauthorized, invalid DBL token.")
+            if(res.statusCode == 401) throw new Error("[new-dblapi] Unauthorized, invalid DBL token.")
             res.on('data', (d) => {
               console.info(`[new-dblapi] Post status code: ${res.statusCode}`)
               if(res.statusCode == 200) console.info(`[new-dblapi] ${count} servers posted successfully`)
@@ -422,7 +424,7 @@ class DblAPI extends EventEmitter{
           },
         }
         let post = https.request(opts, (res) => {
-          if(res.statusCode == 401) throw new Error("Unauthorized, invalid DBL token.")
+          if(res.statusCode == 401) throw new Error("[new-dblapi] Unauthorized, invalid DBL token.")
           res.on('data', (d) => {
             console.info(`[new-dblapi] Post status code: ${res.statusCode}`)
             if(res.statusCode == 200){ 
@@ -454,7 +456,7 @@ class DblAPI extends EventEmitter{
             },
           }
           let post = https.request(opts, (res) => {
-            if(res.statusCode == 401) throw new Error("Unauthorized, invalid DBL token.")
+            if(res.statusCode == 401) throw new Error("[new-dblapi] Unauthorized, invalid DBL token.")
             res.on('data', (d) => {
               console.info(`[new-dblapi] Post status code: ${res.statusCode}`)
               if(res.statusCode == 200) console.info(`[new-dblapi] ${count} servers posted successfully`)
@@ -481,7 +483,7 @@ class DblAPI extends EventEmitter{
           },
         }
         let post = https.request(opts, (res) => {
-          if(res.statusCode == 401) throw new Error("Unauthorized, invalid DBL token.")
+          if(res.statusCode == 401) throw new Error("[new-dblapi] Unauthorized, invalid DBL token.")
           res.on('data', (d) => {
             console.info(`[new-dblapi] Post status code: ${res.statusCode}`)
             if(res.statusCode == 200){ 

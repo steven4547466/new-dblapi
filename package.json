@@ -1,6 +1,6 @@
 {
   "name": "new-dblapi",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "A new dbl api.",
   "main": "dblapi.js",
   "dependencies": {
@@ -16,7 +16,9 @@
     "api",
     "discord",
     "bot",
-    "discordbots"
+    "discordbots",
+    "list",
+    "javascript"
   ],
   "author": "steven4547466",
   "license": "MIT"
