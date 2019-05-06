@@ -28,7 +28,7 @@ const DBL = require('new-dblapi')
 client.dbl = new DBL(token[, client])
 ```
 # Then... 
-After you have a **discord.js** bot (if you don't I don't even know why your here) and a dbl token you call the constructor, it'll look something like:
+After you have a **discord.js or eris** bot (if you don't I don't even know why your here) and a dbl token you call the constructor, it'll look something like:
 ```javascript
 const DBL = require('new-dblapi')
 const dbl = new DBL(token[, options[, client]])
@@ -85,7 +85,7 @@ You can check votes by doing `dbl.db.includes(id)`. `dbl.db` will return a promi
 # Other cool stuff
 What else can I do with this package? Theres some cool stuff you can do with this package, well bascially everything the original one can do.
 
-How do I post stats? This one's easy, just provide a client (**discord.js client**). If you dont provide a delay in `options`, it will automatically be 30 minutes, the minimum is 15 minutes (0 to disable).
+How do I post stats? This one's easy, just provide a client (**discord.js or eris client**). If you dont provide a delay in `options`, it will automatically be 30 minutes, the minimum is 15 minutes (0 to disable).
 
 What about other methods? There are 8 whole methods. `getUser(id)`, `getBot([id[, votes]])` (votes is false by default, add true to get last 1000 votes), `getBots([query])`, `checkVote(id)`, `getStats([id])`, `getWidget([id[, options])`, `postStats([client])`
 
@@ -108,7 +108,5 @@ What about other methods? There are 8 whole methods. `getUser(id)`, `getBot([id[
 This project may stay updated when I get time.
 
 Will I add requests from the github? Yes.
-
-Will I add support for eris? Maybe, haven't decided.
 
 Do I use new-dblapi? Yes, I made it, so I'll use it.

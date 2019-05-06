@@ -22,7 +22,7 @@ class DblAPI extends EventEmitter{
    * @param {Object} [options.voteLock] An object with the vote lock options.
    * @param {boolean} [options.voteLock.on = false] true or false. Would turn vote locking on, defaults to off.
    * @param {number} [options.voteLock.timeOut = 86400000] How long a vote should last for. Defaults to 1 day.
-   * @param {any} [client] A discord.js client, will auto post stats if not disabled.
+   * @param {any} [client] A discord.js or eris client, will auto post stats if not disabled.
    */
   constructor(token, options, client){
     super()
@@ -34,13 +34,13 @@ class DblAPI extends EventEmitter{
     }
     this.token = token
 
-    if(isLib(options)){
+    if(isLib(options, "discord.js") || isLib(options, "eris")){
       client = options
       options = {}
     }
     this.options = options || {}
 
-    if(client && isLib(client)){
+    if(client && (isLib(client, "discord.js") || isLib(client, "eris"))){
       this.client = client
       if(!this.options.delay) this.options.delay = 1800000
       if(this.options.delay != 0){
@@ -53,7 +53,7 @@ class DblAPI extends EventEmitter{
         })
       }
     }else if(client){
-      throw new Error("[new-dblapi] Client provided is not a discord.js client.")
+      throw new Error("[new-dblapi] Client provided is not supported.")
     }
 
     let {
@@ -501,13 +501,13 @@ class DblAPI extends EventEmitter{
 }
 
 /**
- * Ensures the client is discord.js
+ * Ensures the client is discord.js or eris
  * @returns {boolean}
  */
 
-function isLib(client){
+function isLib(client, library){
   try {
-    const lib = require.cache[require.resolve("discord.js")]
+    const lib = require.cache[require.resolve(library)]
     return lib && client instanceof lib.exports.Client
   } catch (e) {
     return false
