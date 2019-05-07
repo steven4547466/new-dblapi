@@ -151,6 +151,7 @@ class DblAPI extends EventEmitter{
         })
         res.on('end', () => {
           if(data){
+            if(res.headers["content-type"] && res.headers["content-type"].includes("application/json")) data = JSON.parse(data)
             resolve(data)
           }else{
             reject(`[new-dblapi] Non-200 code: ${res.statusCode}`)
@@ -179,7 +180,7 @@ class DblAPI extends EventEmitter{
       }
     }
     let req = await this.request(opts)
-    return await JSON.parse(req)
+    return req
   }
 
   /**
@@ -205,7 +206,7 @@ class DblAPI extends EventEmitter{
       }
     }
     let req = await this.request(opts)
-    return await JSON.parse(req)
+    return req
   }
 
   /**
@@ -237,7 +238,7 @@ class DblAPI extends EventEmitter{
       }
     }
     let req = await this.request(opts)
-    return await JSON.parse(req)
+    return req
   }
 
   /**
@@ -258,7 +259,7 @@ class DblAPI extends EventEmitter{
       }
     }
     let req = await this.request(opts)
-    return await !!(JSON.parse(req).voted)
+    return !!req.voted
   }
 
   /**
@@ -279,7 +280,7 @@ class DblAPI extends EventEmitter{
       }
     }
     let req = await this.request(opts)
-    return await JSON.parse(req)
+    return req
   }
 
   /**
