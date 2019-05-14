@@ -54,7 +54,7 @@ You can also provide a cool custom path too!
 const DBL = require('new-dblapi')
 const dbl = new DBL(token, {port: 5000, auth: "Auth", path:"voteswebhook"})
 dbl.on('vote', (vote) => {
-  // Your stuff here, you cant have it all!
+  // Your code
 })
 ```
 **The default path is /vote/**, notice the `/` at the end, this is important, make sure it has that ending slash for any path you choose in your dbl webhook options on your edit page.
@@ -73,7 +73,7 @@ const dbl = new DBL(token, {port: 5000, auth: "Auth", path:"votes", voteEmbed:{u
 ```
 **This does require a client. Fields must have a name and value.** You can use {user} or {id} in fields to replace it with the username or their id.
 
-You can now also have a voteLock feature that will store votes for a certain amount of time. This is in the `voteLock` object. It has "on" and "timeOut". On is a boolean that defines if it's on or not and timeOut defines the time (in milliseconds) a vote will last for.
+You can now also have a voteLock feature that will store votes for a certain amount of time. This is in the `voteLock` object in options. It has "on" and "timeOut". On is a boolean that defines if it's on or not and timeOut defines the time (in milliseconds) a vote will last for.
 ```javascript
 const DBL = require('new-dblapi')
 const dbl = new DBL('your-dbl-token', {delay: 5000000, port: 5555, auth: "Auth", path: "dblhook", voteLock:{on:true,timeOut:50000}}, client)

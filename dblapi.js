@@ -515,4 +515,6 @@ function isLib(client, library){
   }
 }
 
+// Credit to original DBLAPI for the isLib code
+
 module.exports = DblAPI
