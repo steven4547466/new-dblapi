@@ -78,7 +78,12 @@ You can now also have a voteLock feature that will store votes for a certain amo
 const DBL = require('new-dblapi')
 const dbl = new DBL('your-dbl-token', {delay: 5000000, port: 5555, auth: "Auth", path: "dblhook", voteLock:{on:true,timeOut:50000}}, client)
 ```
-You can check votes by doing `dbl.db.includes(id)`. `dbl.db` will return a promise array of id's of people who have voted within your timeOut time.
+You can check votes by doing 
+```javascript
+let votes = await dbl.db
+votes.includes(id) // true or false
+```
+`dbl.db` will return a promise array of id's of people who have voted within your timeOut time.
 
 **Timeouts will not be exact, it will check the database every 5 minutes and delete ones past the voteLock.timeOut time**
 
