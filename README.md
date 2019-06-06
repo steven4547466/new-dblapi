@@ -101,7 +101,7 @@ What about other methods? There are 8 whole methods. `getUser(id)`, `getBot([id[
 
 `getBots([query])` Gets multiple bots. Query options are limit, offset, search, sort and fields.
 
-`checkVote(id)` Checks a users vote. Returns true or galse.
+`checkVote(id)` Checks a users vote. Returns true or false.
 
 `getStats([id])` Gets a **bots** stats if it's listed on discordbots.org. It will return the full bot object.
 
