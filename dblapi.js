@@ -187,7 +187,7 @@ class DblAPI extends EventEmitter{
    * Gets a bot from the discordbots.org api.
    * @param {String} [id = this.client.user.id] A bot id, defaults to the current clients id.
    * @param {boolean} [votes = false] A boolean to return last 1000 votes or a bot.
-   * @returns {Promise<Object>} OR {Promise<Array>}
+   * @returns {(Promise<Object>|Promise<Array>)}
    */
   async getBot(id, votes = false){
     if(!id) id = this.client.user.id
