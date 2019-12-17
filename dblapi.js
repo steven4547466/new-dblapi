@@ -190,8 +190,12 @@ class DblAPI extends EventEmitter{
    * @returns {(Promise<Object>|Promise<Array>)}
    */
   async getBot(id, votes = false){
-    if(!id) id = this.client.user.id
-    if(!id) throw new Error("getBot requires a client OR a supplied id.")
+    if(typeof id !== "boolean"){
+      if(!id) id = this.client.user.id
+      if(!id) throw new Error("getBot requires a client OR a supplied id.")
+    }else{
+      votes = id
+    }
     let path = `/api/bots/${id}`
     if(votes){
       path = `/api/bots/${id}/votes`
@@ -297,8 +301,12 @@ class DblAPI extends EventEmitter{
    * @returns {String}
    */
   async getWidget(id, opts){
-    if(!id) id = this.client.user.id
-    if(!id) throw new Error("[new-dblapi] getWidget requires a client OR a supplied id.")
+    if(typeof id !== "object"){
+      if(!id) id = this.client.user.id
+      if(!id) throw new Error("[new-dblapi] getWidget requires a client OR a supplied id.")
+    }else{
+      opts = id
+    }
     opts = opts || {}
     let {
       topcolor,
