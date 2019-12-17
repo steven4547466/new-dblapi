@@ -97,7 +97,7 @@ What about other methods? There are 8 whole methods. `getUser(id)`, `getBot([id[
 ***
 `getUser(id)` Returns a user from the discordbots api
 
-`getBot([id[, votes]])` Gets a bot from the discordbots api. It will get your bot by default and if you put votes to true, it will return an array of the last 1000 votes.
+`getBot([id[, votes]])` or `getBot([votes])` Gets a bot from the discordbots api. It will get your bot by default and if you put votes to true, it will return an array of the last 1000 votes.
 
 `getBots([query])` Gets multiple bots. Query options are limit, offset, search, sort and fields.
 
@@ -105,7 +105,7 @@ What about other methods? There are 8 whole methods. `getUser(id)`, `getBot([id[
 
 `getStats([id])` Gets a **bots** stats if it's listed on discordbots.org. It will return the full bot object.
 
-`getWidget([id[, options])` Gets a bots widget, has 7 options (object): topcolor, middlecolor, usernamecolor, certifiedcolor, datacolor, labelcolor and highlightcolor.
+`getWidget([id[, options])` or `getWidget([options])` Gets a bots widget, has 7 options (object): topcolor, middlecolor, usernamecolor, certifiedcolor, datacolor, labelcolor and highlightcolor.
 
 `postStats([client])` Posts your bot's stats. Requires that you had a client when calling the constructor OR you provided a client when calling. 
 
