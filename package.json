@@ -1,6 +1,6 @@
 {
   "name": "new-dblapi",
-  "version": "2.1.2",
+  "version": "2.2.0",
   "description": "A new DBL API wrapper.",
   "main": "dblapi.js",
   "dependencies": {
