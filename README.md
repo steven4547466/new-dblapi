@@ -1,3 +1,5 @@
+# This might still work, but DBL rebranded to top.gg so this package also rebranded. The new package will be located at https://www.npmjs.com/package/topggapi
+
 # Simple, Easy, discordbots.org API wrapper.
 ```
 npm i new-dblapi
